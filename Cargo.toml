@@ -1,0 +1,82 @@
+[package]
+name = "odilf-site"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+leptos = { version = "0.7.0", features = ["nightly"] }
+leptos_router = { version = "0.7.0" }
+axum = { version = "0.7", optional = true }
+console_error_panic_hook = { version = "0.1", optional = true}
+leptos_axum = { version = "0.7.0", optional = true }
+leptos_meta = { version = "0.7.0" }
+tokio = { version = "1", features = ["rt-multi-thread", "fs", "macros"], optional = true }
+wasm-bindgen = { version = "=0.2.100", optional = true }
+serde = { version = "1.0.219", features = ["derive"] }
+futures = "0.3.31"
+tokio-stream = { version = "0.1.17", features = ["fs"], optional = true }
+notify = { version = "8.0.0", optional = true }
+comrak = { version = "0.36.0", optional = true }
+thiserror = "2.0.12"
+jiff = { version = "0.2.4", features = ["serde"] }
+gray_matter = { version = "0.2.8", optional = true, default-features = false, features = ["yaml"] }
+leptos-use = "0.15.6"
+tower-http = { version = "0.6.2", optional = true, features = ["normalize-path"] }
+# latex2mathml = { version = "0.2.3", optional = true }
+katex = { version = "0.4.6", optional = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["ssr"]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+]
+ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:notify",
+    "dep:tokio-stream",
+    "dep:comrak",
+    "dep:gray_matter",
+    "leptos-use/ssr",
+    "dep:tower-http",
+    # "dep:latex2mathml",
+    "dep:katex",
+]
+
+[profile.release]
+panic = "abort"
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+# TODO: What does this do?
+[package.metadata.cargo-all-features]
+denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum"]
+skip_feature_sets = [["ssr", "hydrate"]]
+
+
+[package.metadata.leptos]
+# The environment Leptos will run in, usually either "DEV" or "PROD"
+env = "DEV"
+
+bin-features = ["ssr"]
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
+lib-profile-release = "wasm-release"
+
+tailwind-input-file = "style/tailwind.css"
+tailwind-config-file = "style/tailwind.css"

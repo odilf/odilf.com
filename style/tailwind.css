@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+
+@theme {
+  /* TODO: Install and load fonts properly */
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Iosevka Odilf", "ZedMono Nerd Font", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* TODO: This doesn't seem to work */
+@media (prefers-color-scheme: light) {
+  @theme {
+    --color-neutral: orange;
+    --color-primary: black;
+    --color-secondary: pink;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-neutral: oklch(3.97% 0.0074 99);
+    --color-primary: oklch(99.26% 0.0345 99);
+    --color-secondary: oklch(88.38% 0.0493 250.94);
+    --color-secondary: oklch(92.5% 0.0937 322.41);
+  }
+}
+
+.main {
+  padding-block: calc(var(--spacing) * 4);
+  font-family: var(--font-mono);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--text-3xl);
+  font-weight: bolder;
+  padding-top: calc(var(--spacing) * 4);
+}
+
+a {
+  color: var(--color-secondary);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.faint {
+  opacity: 80%;
+  font-weight: light;
+}
+
+.content {
+  padding-inline: calc(var(--spacing) * 4);
+  max-width: 82ch;
+  margin-inline: auto;
+}
+
+.prose {
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+  }
+
+  h4 {
+    font-size: var(--text-lg);
+  }
+
+  p {
+    opacity: 80%;
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+}

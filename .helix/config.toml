@@ -1,0 +1,4 @@
+[editor]
+auto-save.after-delay.enable = true
+auto-save.after-delay.timeout = 100
+
