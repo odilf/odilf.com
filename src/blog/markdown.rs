@@ -2,7 +2,7 @@ use super::data::BlogMetadata;
 use comrak::{
     ExtensionOptions, Options,
     html::{ChildRendering, Context, format_document_with_formatter, format_node_default},
-    nodes::{Ast, AstNode, NodeValue},
+    nodes::{AstNode, NodeValue},
     parse_document,
 };
 use gray_matter::{Matter, engine::YAML};
@@ -31,6 +31,7 @@ pub fn to_html(input: &str) -> (String, String) {
         extension: ExtensionOptions {
             front_matter_delimiter: Some("---".into()),
             math_dollars: true,
+            footnotes: true,
             ..Default::default()
         },
         ..Default::default()
@@ -87,6 +88,7 @@ pub fn to_html(input: &str) -> (String, String) {
         &mut html,
         &comrak::Plugins::default(),
         format_node_custom,
+        (),
     )
     .expect("Markdown should be well-formed.");
     let html = String::from_utf8(html).expect("Parsing should generate valid UTF-8");

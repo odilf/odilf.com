@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-leptos = { version = "0.7.0", features = ["nightly"] }
+leptos = { version = "0.7.0" }
 leptos_router = { version = "0.7.0" }
 axum = { version = "0.7", optional = true }
 console_error_panic_hook = { version = "0.1", optional = true}
@@ -16,16 +16,16 @@ serde = { version = "1.0.219", features = ["derive"] }
 futures = "0.3.31"
 tokio-stream = { version = "0.1.17", features = ["fs"], optional = true }
 notify = { version = "8.0.0", optional = true }
-comrak = { version = "0.36.0", optional = true }
+comrak = { version = "0.38.0", optional = true }
 thiserror = "2.0.12"
 jiff = { version = "0.2.4", features = ["serde"] }
 gray_matter = { version = "0.2.8", optional = true, default-features = false, features = ["yaml"] }
 leptos-use = "0.15.6"
 tower-http = { version = "0.6.2", optional = true, features = ["normalize-path"] }
-# latex2mathml = { version = "0.2.3", optional = true }
 katex = { version = "0.4.6", optional = true }
 
 [lib]
+# name = "caca" 
 crate-type = ["cdylib", "rlib"]
 
 [features]
@@ -69,8 +69,16 @@ skip_feature_sets = [["ssr", "hydrate"]]
 
 
 [package.metadata.leptos]
+output-name = "odilf-site"
 # The environment Leptos will run in, usually either "DEV" or "PROD"
-env = "DEV"
+# env = "DEV"
+bin-package = "server"
+lib-package = "front"
+
+# output-name = "odilf-site"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+assets-dir = "assets"
 
 bin-features = ["ssr"]
 bin-default-features = false

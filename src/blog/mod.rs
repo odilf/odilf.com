@@ -140,7 +140,7 @@ fn BlogEntry() -> impl IntoView {
 
                 <Link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"/>
 
-                // TODOL Change html lang when having lang
+                // TODO: Change html lang when having lang
                 // <Html
                 //     {..}
                 //     lang="he"

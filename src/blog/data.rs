@@ -32,7 +32,12 @@ pub struct BlogMetadata {
 }
 
 fn base_path() -> PathBuf {
-    PathBuf::from("/Users/odilf/brain/personal/writing")
+    // This could be a `LazyLock`, but it's nice to have it here to be able to change the value at runtime.
+    // Maybe that is unecessary tho.
+    let path_str = std::env::var("ODILF_BLOG_PATH")
+        .expect("ODILF_BLOG_PATH needs to be set to a path with markdown files");
+
+    PathBuf::from(path_str)
 }
 
 /// Finds the slug of a blog post from a file path
@@ -111,11 +116,13 @@ pub async fn list_entries() -> Result<Vec<BlogEntry>, ServerFnError> {
 
 #[cfg(feature = "ssr")]
 async fn list_entries_impl(base_path: &Path) -> io::Result<Vec<BlogEntry>> {
+    use std::cmp::Reverse;
+
     use tokio_stream::wrappers::ReadDirStream;
 
     // TODO: This seems inneficient...
     let files = ReadDirStream::new(fs::read_dir(base_path).await?);
-    let output = files
+    let mut blog_entries = files
         .try_filter_map::<_, _, Vec<BlogEntry>>(|entry| async move {
             let result = if entry.path().is_dir() {
                 Box::pin(list_entries_impl(&entry.path())).await?
@@ -130,7 +137,9 @@ async fn list_entries_impl(base_path: &Path) -> io::Result<Vec<BlogEntry>> {
         }) // This is `impl Stream<Item = Result<Vec<BlogEntry>>>`
         .try_collect::<Vec<Vec<BlogEntry>>>()
         .await
-        .map(|vss| vss.into_iter().flatten().collect::<Vec<_>>());
+        .map(|vss| vss.into_iter().flatten().collect::<Vec<_>>())?;
 
-    output
+    blog_entries.sort_by_key(|entry| Reverse(entry.metadata.date));
+
+    Ok(blog_entries)
 }

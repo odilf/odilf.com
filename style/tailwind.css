@@ -5,7 +5,7 @@
   /* TODO: Install and load fonts properly */
   --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: "Iosevka Odilf", "ZedMono Nerd Font", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono: "IosevkaSlab", "ZedMono Nerd Font", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* TODO: This doesn't seem to work */
@@ -20,7 +20,8 @@
 @media (prefers-color-scheme: dark) {
   @theme {
     --color-neutral: oklch(3.97% 0.0074 99);
-    --color-primary: oklch(99.26% 0.0345 99);
+    --color-primary-intense: oklch(0.94 0.1011 96);
+    --color-primary: oklch(99.99996% 0.000345 99);
     --color-secondary: oklch(88.38% 0.0493 250.94);
     --color-secondary: oklch(92.5% 0.0937 322.41);
   }
@@ -37,6 +38,7 @@ h3,
 h4,
 h5,
 h6 {
+  color: var(--color-primary-intense);
   font-size: var(--text-3xl);
   font-weight: bolder;
   padding-top: calc(var(--spacing) * 4);
@@ -74,8 +76,26 @@ a:hover {
     font-size: var(--text-lg);
   }
 
-  p {
-    opacity: 80%;
+  p,
+  ul,
+  pre,
+  ol {
+    opacity: 90%;
     margin-bottom: calc(var(--spacing) * 4);
+  }
+
+  ul>li {
+    list-style: disc;
+    margin-left: 2ch;
+  }
+
+  ol>li {
+    list-style: decimal-leading-zero;
+    margin-left: 4ch;
+  }
+
+  .footnotes {
+    margin-top: 1em;
+    font-size: 10pt;
   }
 }
