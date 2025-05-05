@@ -5,7 +5,7 @@
   /* TODO: Install and load fonts properly */
   --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: "IosevkaSlab", "ZedMono Nerd Font", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono: "IosevkaTerm", "ZedMono Nerd Font", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* TODO: This doesn't seem to work */
@@ -79,7 +79,8 @@ a:hover {
   p,
   ul,
   pre,
-  ol {
+  ol,
+  blockquote {
     opacity: 90%;
     margin-bottom: calc(var(--spacing) * 4);
   }
@@ -97,5 +98,15 @@ a:hover {
   .footnotes {
     margin-top: 1em;
     font-size: 10pt;
+  }
+
+  blockquote {
+    padding-left: 1.5ch;
+    border-left: 0.5ch solid var(--color-secondary);
+    font-style: italic;
+  }
+
+  blockquote p {
+    display: inline;
   }
 }
