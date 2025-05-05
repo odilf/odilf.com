@@ -25,11 +25,10 @@ tower-http = { version = "0.6.2", optional = true, features = ["normalize-path"]
 katex = { version = "0.4.6", optional = true }
 
 [lib]
-# name = "caca" 
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = ["ssr"]
+# default = ["ssr"]
 hydrate = [
     "leptos/hydrate",
     "dep:console_error_panic_hook",

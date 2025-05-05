@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:tweerwag/nixpkgs/bump-cargo-leptos";
+    # nixpkgs.url = "github:NixOS/nixpkgs/91a22f76cd1716f9d0149e8a5c68424bb691de15";
     rust-overlay.url = "github:oxalica/rust-overlay";
     naersk.url = "github:nix-community/naersk";
     flake-utils.url = "github:numtide/flake-utils";
@@ -42,8 +44,15 @@
 
         cargo = (pkgs.lib.importTOML ./Cargo.toml).package;
 
-        cargo-leptos' = pkgs.cargo-leptos;
-        cargo-leptos =
+        cargo-leptos'' = pkgs.writeShellScriptBin "cargo-leptos" ''
+          echo Yo yo yo.
+          ls -l
+          cat build.rs
+          cat Cargo.toml
+          ./cargo-leptos
+        '';
+        cargo-leptos = pkgs.cargo-leptos;
+        cargo-leptos' =
           let
             inherit (pkgs.darwin.apple_sdk.frameworks)
               CoreServices
@@ -53,22 +62,21 @@
             inherit (pkgs.lib) optionals;
             inherit (pkgs.stdenv.hostPlatform) isDarwin;
           in
-          (pkgs.rustPlatform.buildRustPackage.override { stdenv = pkgs.gcc13Stdenv; }) rec {
+          (pkgs.rustPlatform.buildRustPackage) rec {
             pname = "cargo-leptos";
-            version = "0.2.32";
+            version = "0.2.33";
 
             src = pkgs.fetchFromGitHub {
               owner = "leptos-rs";
               repo = "cargo-leptos";
               rev = "v${version}";
-              hash = "sha256-sRfIRPs0hhFjMK9KQ4AUDSGTu1U8QIpVxsVhsWjY4fs=";
+              hash = "sha256-fsbwxLiT7eVbC35ZRpKoeY7ZbNZwPAnYkOXLmV0doCo=";
             };
 
             useFetchCargoVendor = true;
-            cargoHash = "sha256-zSZxgC+S0ovknSgNhRa0GvHjVp97njgKHjOCz8cB5aE=";
+            cargoHash = "sha256-oYuSVfmvhsP81O7DgVqErrNCgF6IH5F0MZXQkeDq5u0=";
 
             nativeBuildInputs = [
-              pkgs.gcc13Stdenv.cc.cc.lib
               pkgs.perl
             ];
 
@@ -76,6 +84,7 @@
               [
                 pkgs.pkg-config
                 pkgs.openssl
+                pkgs.libgit2
               ]
               ++ optionals isDarwin [
                 SystemConfiguration
@@ -90,6 +99,8 @@
       in
       {
         packages.default = naersk'.buildPackage {
+          name = cargo.name;
+          version = cargo.version;
           src = ./.;
 
           # cargo build --package=odilf-site --lib --target-dir=/Users/odilf/code/odilf.com/target/front --target=wasm32-unknown-unknown --no-default-features --features=hydrate --profile=wasm-release
@@ -129,6 +140,15 @@
           # Leptos which output name to look for.
           LEPTOS_OUTPUT_NAME = cargo.metadata.leptos.output-name;
         };
+
+        # packages.default = pkgs.rustPlatform.buildRustPackage {
+        #   pname = cargo.name;
+        #   version = cargo.version;
+        #   src = ./.;
+
+        #   # useFetchCargoVendor = true;
+        #   cargoHash = "sha256-q7FRueZ1b5nZ85jvN5lPT2QPQqshBS7rHuqpogXgfXs=";
+        # };
 
         devShells.default = pkgs.mkShell {
           buildInputs = [
