@@ -68,10 +68,12 @@ impl BlogEntry {
             return Ok(None);
         };
 
-        // if metadata.draft != Some(false) {
-        //     return Ok(None);
-        // }
-        //
+        // Filter out drafts in release, show them at runtime.
+        #[cfg(not(debug_assertions))]
+        if metadata.draft != Some(false) {
+            return Ok(None);
+        }
+
         let (html, first_line) = markdown::to_html(&content);
 
         Ok(Some(Self {
