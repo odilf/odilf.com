@@ -23,12 +23,13 @@ gray_matter = { version = "0.2.8", optional = true, default-features = false, fe
 leptos-use = "0.15.6"
 tower-http = { version = "0.6.2", optional = true, features = ["normalize-path"] }
 katex = { version = "0.4.6", optional = true }
+color-eyre = "0.6.5"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [features]
-# default = ["ssr"]
+default = ["ssr"]
 hydrate = [
     "leptos/hydrate",
     "dep:console_error_panic_hook",
