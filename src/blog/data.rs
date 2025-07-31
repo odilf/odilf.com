@@ -85,6 +85,14 @@ impl BlogEntry {
     /// Reads a blog post from a file. Returns `Err` if there was an error reading the file,
     /// `Ok(None)` if everything went correctly but the
     pub async fn from_file(path: &Path) -> io::Result<Option<Self>> {
+        // Only check .md extensions
+        if path
+            .extension()
+            .is_none_or(|ext| ext.to_str() != Some("md"))
+        {
+            return Ok(None);
+        }
+
         let Some(slug) = get_slug_from_path(path) else {
             return Ok(None);
         };
