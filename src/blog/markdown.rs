@@ -1,4 +1,5 @@
-use super::data::BlogMetadata;
+use crate::blog::BlogMetadata;
+use color_eyre::eyre::{self, ContextCompat, WrapErr as _};
 use comrak::{
     ExtensionOptions, Options,
     html::{ChildRendering, Context, format_document_with_formatter, format_node_default},
@@ -6,24 +7,23 @@ use comrak::{
     parse_document,
 };
 use gray_matter::{Matter, engine::YAML};
-// use latex2mathml::{DisplayStyle, latex_to_mathml};
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    path::PathBuf,
+};
 
-pub fn parse_metadata(content: &str) -> io::Result<BlogMetadata> {
+pub fn parse_metadata(content: &str) -> eyre::Result<BlogMetadata> {
     let frontmatter_parser = Matter::<YAML>::new();
 
-    let Some(metadata) = frontmatter_parser.parse_with_struct(&content) else {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidData,
-            "frontmatter is not valid.",
-        ));
-    };
+    let metadata = frontmatter_parser
+        .parse(&content)
+        .wrap_err("Couldn't parse frontmatter")?;
 
-    Ok(metadata.data)
+    metadata.data.wrap_err("Frontmatter not found")
 }
 
-/// Parses the input into markdown and returns an `(html, first_line)` tuple.
-pub fn to_html(input: &str) -> (String, String) {
+/// Parses the input into markdown and returns an `(html, summary)` tuple.
+pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, String) {
     // TODO: Pass this arena from above.
     let arena = comrak::Arena::new();
 
@@ -41,42 +41,71 @@ pub fn to_html(input: &str) -> (String, String) {
 
     const FIRST_LINE_MIN_LENGTH: usize = 180;
 
-    let mut first_line = String::new();
+    let mut summary = String::new();
     let mut push_text = |text: &str| {
-        if first_line.len() + text.len() >= FIRST_LINE_MIN_LENGTH {
-            first_line.push_str(&text[..FIRST_LINE_MIN_LENGTH - first_line.len()]);
+        if summary.len() + text.len() >= FIRST_LINE_MIN_LENGTH {
+            summary.push_str(&text[..FIRST_LINE_MIN_LENGTH - summary.len()]);
         } else {
-            first_line.push_str(text);
+            summary.push_str(text);
         }
 
-        if first_line.len() >= FIRST_LINE_MIN_LENGTH - 1 {
+        if summary.len() >= FIRST_LINE_MIN_LENGTH - 1 {
             return false;
         }
 
-        first_line.push(' ');
         true
     };
 
-    'outer: for child in root.children() {
-        if let NodeValue::Paragraph = child.data.borrow().value {
-            for node in child.children() {
-                let cont = match &node.data.borrow().value {
-                    NodeValue::Text(text) => push_text(text),
-                    NodeValue::Math(math) => push_text(&math.literal),
-                    _ => true,
-                };
+    for node in root.descendants() {
+        let cont = match &node.data.borrow().value {
+            NodeValue::Text(text) => push_text(dbg!(text)),
+            NodeValue::Math(math) => push_text(&math.literal),
+            // TODO: This might be poorly handled, especially we should collapse spaces.
+            _ => push_text(" "),
+        };
 
-                if !cont {
-                    break 'outer;
-                }
-            }
+        if !cont {
+            break;
         }
     }
+
+    dbg!(&summary);
+    // 'outer: for child in root.children() {
+    //     if let NodeValue::Paragraph = child.data.borrow().value {
+    //         for node in child.children() {
+    //             let cont = match &node.data.borrow().value {
+    //                 NodeValue::Text(text) => push_text(dbg!(text)),
+    //                 NodeValue::Math(math) => push_text(&math.literal),
+    //                 NodeValue::Link(url) => {
+    //                     dbg!(url);
+    //                     push_text(&url.title)
+    //                 }
+    //                 other => {
+    //                     dbg!(other);
+    //                     true
+    //                 }
+    //                 _ => true,
+    //             };
+
+    //             if !cont {
+    //                 break 'outer;
+    //             }
+    //         }
+    //     }
+    // }
 
     for node in root.descendants() {
         match &mut node.data.borrow_mut().value {
             // Increase the levels of all heading by one, since the title is going to be the first.
             NodeValue::Heading(heading_node) => heading_node.level += 1,
+            NodeValue::Image(img) => {
+                referenced_links.push(img.url.clone());
+                img.url = PathBuf::from("/blog")
+                    .join(&img.url)
+                    .to_str()
+                    .expect("All are strings originally")
+                    .to_string();
+            }
             _ => (),
         }
     }
@@ -93,7 +122,7 @@ pub fn to_html(input: &str) -> (String, String) {
     .expect("Markdown should be well-formed.");
     let html = String::from_utf8(html).expect("Parsing should generate valid UTF-8");
 
-    (html, first_line)
+    (html, summary)
 }
 
 #[inline]
