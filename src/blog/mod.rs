@@ -1,10 +1,7 @@
 //! Blog of odilf.com
-//!
-//! There are blog _entries_, which contain the summaries you see in the blog
-//! home page, and then there are the blog _posts_, which are the ones with the
-//! contents themselves.
 
-pub mod markdown;
+pub mod feed;
+mod markdown;
 
 use crate::components::{self, back};
 use color_eyre::eyre;
@@ -12,7 +9,7 @@ use maud::{Markup, PreEscaped, Render, html};
 use serde::{Deserialize, Serialize};
 
 /// Blog home page, with the blog entries.
-pub fn home(entries: impl Iterator<Item = BlogEntry>) -> Markup {
+pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
     // Show the drafts with less opacity on development.
     #[cfg(debug_assertions)]
     const STYLE_IF_DEBUG: &str = r"<style> .topic-d { opacity: 50%; } </style>";

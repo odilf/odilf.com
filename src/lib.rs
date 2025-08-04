@@ -12,6 +12,9 @@ pub fn shell(content: Markup) -> Markup {
                 meta name="viewport" content="width=device-width, initial-scale=1.0" {}
                 title text="odilf's site" {}
                 link href="/static/app.css" rel="stylesheet" {}
+
+                link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/rss.xml" {}
+                link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" {}
             }
 
             body { main class="font-mono py-4 content" { (content) } }

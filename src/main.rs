@@ -39,11 +39,15 @@ fn main() -> eyre::Result<()> {
     Ok(())
 }
 
-fn save_page(path: impl AsRef<Path>, page: Markup, output: &Path) -> eyre::Result<()> {
+fn save_page_no_shell(path: impl AsRef<Path>, page: Markup, output: &Path) -> eyre::Result<()> {
     let path = path.as_ref();
     fs::create_dir_all(output.join(path.parent().wrap_err("Couldn't get parent of path")?))?;
-    fs::write(output.join(path), shell(page).0)
+    fs::write(output.join(path), page.0)
         .wrap_err_with(|| format!("Couldn't write to page {path:?}"))
+}
+
+fn save_page(path: impl AsRef<Path>, page: Markup, output: &Path) -> eyre::Result<()> {
+    save_page_no_shell(path, shell(page), output)
 }
 
 fn generate_blog(output: &Path) -> eyre::Result<()> {
@@ -109,9 +113,15 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
         .collect::<Vec<_>>();
 
     blog_entries.sort_by_key(|blog| Reverse(blog.metadata.date));
-    save_page(
-        "blog/index.html",
-        blog::home(blog_entries.into_iter()),
+    save_page("blog/index.html", blog::home(blog_entries.iter()), output)?;
+    save_page_no_shell(
+        "blog/rss.xml",
+        blog::feed::rss(blog_entries.iter())?,
+        output,
+    )?;
+    save_page_no_shell(
+        "blog/atom.xml",
+        blog::feed::atom(blog_entries.iter())?,
         output,
     )?;
 
