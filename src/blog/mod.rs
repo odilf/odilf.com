@@ -20,11 +20,11 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
         (back())
 
         h1 { "blog" }
-        p class="pb-4 faint" {
+        p."pb-4 faint" {
             "some thoughts, stories and reflections from throughout the years."
         }
 
-        div class="flex mb-4 gap-2" {
+        ."flex mb-4 gap-2" {
             button #all-tab disabled="true" { "all" }
             button #development-tab { "development" }
             button #personal-tab { "personal" }
@@ -32,7 +32,7 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
 
         ul {
             @for entry in entries {
-                li class="mb-4" { (entry.render_summary()) }
+                li."mb-4" { (entry.render_summary()) }
             }
         }
 
@@ -90,25 +90,25 @@ impl BlogEntry {
         }
 
         html! {
-            a href=(self.slug) class=(topic_classes) {
-                div class="flex" {
-                    div class="text-primary pr-[1ch]" { ">" }
-                    div class="flex-1 font-bold text-lg" { (self.metadata.title) }
+            a href=(format!("/blog/{}", self.slug)).(topic_classes) {
+                ."flex" {
+                    ."text-primary pr-[1ch]" { ">" }
+                    ."flex-1 font-bold text-lg" { (self.metadata.title) }
 
-                    div class="font-light text-primary" {
+                    ."font-light text-primary" {
                         (self.metadata.date.strftime("%d %b, %Y").to_string())
                     }
                 }
 
-                div class="flex gap-2 text-primary" {
-                    div
+                ."flex gap-2 text-primary" {
+
+                    ."flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
                         style="text-decoration: none"
-                        class="flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
                     {
                         (self.summary)
                     }
 
-                    div class="flex flex-wrap gap-1 justify-evenly no-underline max-w-[30%] w-[15%]" {
+                    ."flex flex-wrap gap-1 justify-evenly no-underline max-w-[30%] w-[15%]" {
                         @for topic in &self.metadata.topics {
                             (tag(topic))
                         }
@@ -121,7 +121,7 @@ impl BlogEntry {
 
 fn tag(topic: &str) -> Markup {
     html! {
-        div class="content-center px-1 text-xs rounded opacity-80 w-fit h-fit outline-1 outline-primary text-primary py-[1px]" {
+        ."content-center px-1 text-xs rounded opacity-80 w-fit h-fit outline-1 outline-primary text-primary py-[1px]" {
             (topic)
         }
     }
@@ -132,16 +132,16 @@ impl Render for BlogEntry {
         html! {
             (components::back())
             h1 { (self.metadata.title) }
-            div class="flex gap-2 mb-6" {
-                div class="font-light text-primary" {
+            ."flex gap-2 mb-6" {
+                ."font-light text-primary" {
                     (self.metadata.date.strftime("%d %b, %Y").to_string())
                 }
-                div class="flex-1" {}
+                ."flex-1" {}
                 @for topic in &self.metadata.topics {
                     (tag(topic))
                 }
             }
-            div class="prose pb-8" lang=(self.metadata.lang.html_name()) {
+            ."prose pb-8" lang=(self.metadata.lang.html_name()) {
                 (PreEscaped(&self.html))
             }
 

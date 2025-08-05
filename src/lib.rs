@@ -17,7 +17,7 @@ pub fn shell(content: Markup) -> Markup {
                 link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" {}
             }
 
-            body { main class="font-mono py-4 content" { (content) } }
+            body { main."font-mono py-4 content" { (content) } }
         }
     }
 }
@@ -27,11 +27,11 @@ pub fn home() -> Markup {
 
     html! {
         h1 { "hi, i'm Ody 👋" }
-        p class="mb-4 faint" { "go ahead and take a look at what's here ^^" }
+        p."mb-4 faint" { "go ahead and take a look at what's here ^^" }
 
         ol {
             @for (href, display) in links {
-                li class="text-xl hover:underline text-secondary" {
+                li."text-xl hover:underline text-secondary" {
                     a href=(href) { "> " (display) }
                 }
             }
@@ -43,7 +43,7 @@ pub fn about() -> Markup {
     html! {
         (components::back())
         h1 { "about" }
-        div class="prose" {
+        ."prose" {
             p {
                 "hi, I'm Odysseas, I like making computers do stuff tastefully, usually using Rust."
             }
