@@ -37,15 +37,7 @@
               pkgs.rust-analyzer
               pkgs.tailwindcss_4
               pkgs.bacon
-              pkgs.static-web-server
-              (pkgs.writeShellScriptBin "serve" ''
-                (trap 'kill 0' SIGINT;
-                bacon run &
-                tailwindcss --input public/app.css --output target/site/static/app.css --watch &
-                static-web-server -d target/site/ -a 127.0.0.1 -p 3000 -g trace &
-                wait
-                )
-              '')
+              pkgs.binserve
             ];
 
             ODILF_BLOG_PATH = "/Users/odilf/brain/personal/writing";

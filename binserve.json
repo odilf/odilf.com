@@ -1,0 +1,8 @@
+{
+    "server": {
+        "host": "localhost:5173"
+    },
+    "routes": {
+        "/": "target/debug/site"
+    }
+}
