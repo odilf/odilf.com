@@ -58,7 +58,7 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
 
     for node in root.descendants() {
         let cont = match &node.data.borrow().value {
-            NodeValue::Text(text) => push_text(dbg!(text)),
+            NodeValue::Text(text) => push_text(text),
             NodeValue::Math(math) => push_text(&math.literal),
             // TODO: This might be poorly handled, especially we should collapse spaces.
             _ => push_text(" "),
@@ -69,31 +69,6 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
         }
     }
 
-    dbg!(&summary);
-    // 'outer: for child in root.children() {
-    //     if let NodeValue::Paragraph = child.data.borrow().value {
-    //         for node in child.children() {
-    //             let cont = match &node.data.borrow().value {
-    //                 NodeValue::Text(text) => push_text(dbg!(text)),
-    //                 NodeValue::Math(math) => push_text(&math.literal),
-    //                 NodeValue::Link(url) => {
-    //                     dbg!(url);
-    //                     push_text(&url.title)
-    //                 }
-    //                 other => {
-    //                     dbg!(other);
-    //                     true
-    //                 }
-    //                 _ => true,
-    //             };
-
-    //             if !cont {
-    //                 break 'outer;
-    //             }
-    //         }
-    //     }
-    // }
-
     for node in root.descendants() {
         match &mut node.data.borrow_mut().value {
             // Increase the levels of all heading by one, since the title is going to be the first.
@@ -103,7 +78,7 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
                 img.url = PathBuf::from("/blog")
                     .join(&img.url)
                     .to_str()
-                    .expect("All are strings originally")
+                    .expect("All are UTF-8 strings originally")
                     .to_string();
             }
             _ => (),
