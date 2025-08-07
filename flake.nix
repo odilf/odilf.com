@@ -37,7 +37,7 @@
               pkgs.rust-analyzer
               pkgs.just
 
-              pkgs.bacon
+              pkgs.watchexec
               pkgs.live-server
 
               pkgs.tailwindcss_4
