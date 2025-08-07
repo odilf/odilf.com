@@ -3,6 +3,6 @@
         "host": "localhost:5173"
     },
     "routes": {
-        "/": "target/release/site"
+        "/": "target/debug/site"
     }
 }

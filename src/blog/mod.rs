@@ -5,14 +5,14 @@ mod markdown;
 
 use crate::components::{self, back};
 use color_eyre::eyre;
-use maud::{Markup, PreEscaped, Render, html};
+use maud::{html, Markup, PreEscaped, Render};
 use serde::{Deserialize, Serialize};
 
 /// Blog home page, with the blog entries.
 pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
     // Show the drafts with less opacity on development.
     #[cfg(debug_assertions)]
-    const STYLE_IF_DEBUG: &str = r"<style> .topic-d { opacity: 50%; } </style>";
+    const STYLE_IF_DEBUG: &str = r"<style> .draft-post { opacity: 50%; } </style>";
     #[cfg(not(debug_assertions))]
     const STYLE_IF_DEBUG: &str = "";
 
@@ -59,16 +59,13 @@ impl BlogEntry {
         content: &str,
         referenced_links: &mut Vec<String>,
     ) -> eyre::Result<Option<Self>> {
-        let Ok(mut metadata) = markdown::parse_metadata(content) else {
+        let Ok(metadata) = markdown::parse_metadata(content) else {
             return Ok(None);
         };
 
+        #[cfg(not(debug_assertions))]
         if metadata.draft != Some(false) {
-            if cfg!(debug_assertions) {
-                metadata.topics.push("d".into());
-            } else {
-                return Ok(None);
-            }
+            return Ok(None);
         }
 
         let (html, summary) = markdown::to_html(&content, referenced_links);
@@ -87,6 +84,11 @@ impl BlogEntry {
             topic_classes.push_str(" ");
             topic_classes.push_str("topic-");
             topic_classes.push_str(topic);
+        }
+
+        #[cfg(debug_assertions)]
+        if self.metadata.draft != Some(false) {
+            topic_classes.push_str(" draft-post")
         }
 
         html! {
