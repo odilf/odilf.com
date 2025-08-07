@@ -35,13 +35,15 @@
             packages = [
               pkgs.rust-bin.beta.latest.default
               pkgs.rust-analyzer
-              pkgs.tailwindcss_4
+              pkgs.just
+
               pkgs.bacon
-              pkgs.binserve
+              pkgs.live-server
+
+              pkgs.tailwindcss_4
+              pkgs.static-web-server
               pkgs.wrangler
-              (pkgs.writeShellScriptBin "deploy" ''
-                cargo run --release && wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
-              '')
+
             ];
 
             ODILF_BLOG_PATH = "/Users/odilf/brain/personal/writing";
