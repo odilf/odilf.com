@@ -77,7 +77,7 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
                 return Ok(None);
             }
 
-            tracing::info!(?path, "Generating blog page");
+            tracing::debug!(?path, "Reading blog entry");
 
             let post_content = fs::read_to_string(&path).wrap_err("Couldn't read blog post")?;
 
@@ -92,6 +92,8 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
             else {
                 return Ok(None);
             };
+
+            tracing::info!(?path, "Generating blog page");
 
             // TODO: This shouldn't need to allocate
             save_page(

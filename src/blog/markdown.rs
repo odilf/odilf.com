@@ -1,7 +1,7 @@
 use crate::blog::BlogMetadata;
 use color_eyre::eyre::{self, ContextCompat, WrapErr as _};
 use comrak::{
-    ExtensionOptions, Options,
+    ExtensionOptions, Options, RenderOptions,
     html::{ChildRendering, Context, format_document_with_formatter, format_node_default},
     nodes::{AstNode, NodeValue},
     parse_document,
@@ -32,6 +32,11 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
             front_matter_delimiter: Some("---".into()),
             math_dollars: true,
             footnotes: true,
+            ..Default::default()
+        },
+        render: RenderOptions {
+            figure_with_caption: true,
+            unsafe_: true,
             ..Default::default()
         },
         ..Default::default()
@@ -101,7 +106,7 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
 }
 
 #[inline]
-pub fn format_node_custom<'a>(
+fn format_node_custom<'a>(
     context: &mut Context,
     node: &'a AstNode<'a>,
     entering: bool,
@@ -112,7 +117,7 @@ pub fn format_node_custom<'a>(
     }
 }
 
-pub fn render_math<'a>(
+fn render_math<'a>(
     context: &mut Context,
     node: &'a AstNode<'a>,
     entering: bool,

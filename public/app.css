@@ -127,6 +127,17 @@ body {
         code {
             color: var(--color-tertiary);
         }
+
+        figure {
+            img {
+                max-height: 600px;
+                margin-inline: auto;
+            }
+
+            figcaption {
+                @apply w-fit mx-auto text-sm text-tertiary mt-1 mb-2;
+            }
+        }
     }
 
     button {
