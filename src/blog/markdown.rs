@@ -22,8 +22,14 @@ pub fn parse_metadata(content: &str) -> eyre::Result<BlogMetadata> {
     metadata.data.wrap_err("Frontmatter not found")
 }
 
+pub struct MarkdownData {
+    pub html: String,
+    pub summary: String,
+    pub word_count: u32,
+}
+
 /// Parses the input into markdown and returns an `(html, summary)` tuple.
-pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, String) {
+pub fn parse(input: &str, referenced_links: &mut Vec<String>) -> MarkdownData {
     // TODO: Pass this arena from above.
     let arena = comrak::Arena::new();
 
@@ -44,36 +50,42 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
 
     let root = parse_document(&arena, input, &options);
 
-    const FIRST_LINE_MIN_LENGTH: usize = 180;
+    // Get summary
+    let summary = {
+        const FIRST_LINE_MIN_LENGTH: usize = 180;
 
-    let mut summary = String::new();
-    let mut push_text = |text: &str| {
-        if summary.len() + text.len() >= FIRST_LINE_MIN_LENGTH {
-            summary.push_str(&text[..FIRST_LINE_MIN_LENGTH - summary.len()]);
-        } else {
-            summary.push_str(text);
-        }
+        let mut summary = String::new();
+        let mut push_text = |text: &str| {
+            if summary.len() + text.len() >= FIRST_LINE_MIN_LENGTH {
+                summary.push_str(&text[..FIRST_LINE_MIN_LENGTH - summary.len()]);
+            } else {
+                summary.push_str(text);
+            }
 
-        if summary.len() >= FIRST_LINE_MIN_LENGTH - 1 {
-            return false;
-        }
+            if summary.len() >= FIRST_LINE_MIN_LENGTH - 1 {
+                return false;
+            }
 
-        true
-    };
-
-    for node in root.descendants() {
-        let cont = match &node.data.borrow().value {
-            NodeValue::Text(text) => push_text(text),
-            NodeValue::Math(math) => push_text(&math.literal),
-            // TODO: This might be poorly handled, especially we should collapse spaces.
-            _ => push_text(" "),
+            true
         };
 
-        if !cont {
-            break;
-        }
-    }
+        for node in root.descendants() {
+            let cont = match &node.data.borrow().value {
+                NodeValue::Text(text) => push_text(text),
+                NodeValue::Math(math) => push_text(&math.literal),
+                // TODO: This might be poorly handled, especially we should collapse spaces.
+                _ => push_text(" "),
+            };
 
+            if !cont {
+                break;
+            }
+        }
+
+        summary
+    };
+
+    let mut word_count = 0;
     for node in root.descendants() {
         match &mut node.data.borrow_mut().value {
             // Increase the levels of all heading by one, since the title is going to be the first.
@@ -87,6 +99,10 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
                     .to_string();
             }
             _ => (),
+        }
+
+        if let Some(text) = node.data.borrow().value.text() {
+            word_count += text.split_whitespace().count() as u32;
         }
     }
 
@@ -102,7 +118,11 @@ pub fn to_html(input: &str, referenced_links: &mut Vec<String>) -> (String, Stri
     .expect("Markdown should be well-formed.");
     let html = String::from_utf8(html).expect("Parsing should generate valid UTF-8");
 
-    (html, summary)
+    MarkdownData {
+        html,
+        summary,
+        word_count,
+    }
 }
 
 #[inline]

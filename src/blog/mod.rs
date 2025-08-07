@@ -3,9 +3,14 @@
 pub mod feed;
 mod markdown;
 
-use crate::components::{self, back};
+use std::borrow::Cow;
+
+use crate::{
+    blog::markdown::MarkdownData,
+    components::{self, back},
+};
 use color_eyre::eyre;
-use maud::{html, Markup, PreEscaped, Render};
+use maud::{Markup, PreEscaped, Render, html};
 use serde::{Deserialize, Serialize};
 
 /// Blog home page, with the blog entries.
@@ -50,6 +55,7 @@ pub struct BlogEntry {
     pub slug: String,
     pub html: String,
     pub summary: String,
+    pub word_count: u32,
     pub metadata: BlogMetadata,
 }
 
@@ -65,17 +71,32 @@ impl BlogEntry {
 
         #[cfg(not(debug_assertions))]
         if metadata.draft != Some(false) {
+            tracing::debug!("Skipped draft post");
             return Ok(None);
         }
 
-        let (html, summary) = markdown::to_html(&content, referenced_links);
+        let MarkdownData {
+            html,
+            summary,
+            word_count,
+        } = markdown::parse(&content, referenced_links);
 
         Ok(Some(Self {
             slug: slug.into(),
             html,
             summary,
+            word_count,
             metadata,
         }))
+    }
+
+    pub fn tags(&self) -> impl Iterator<Item = Cow<'_, str>> {
+        use std::iter::once;
+        self.metadata
+            .topics
+            .iter()
+            .map(|tag| Cow::Borrowed(tag.as_str()))
+            .chain(once(Cow::Owned(format!("{} words", self.word_count))))
     }
 
     pub fn render_summary(&self) -> Markup {
@@ -111,8 +132,8 @@ impl BlogEntry {
                     }
 
                     ."flex flex-wrap gap-1 justify-evenly no-underline max-w-[30%] w-[15%]" {
-                        @for topic in &self.metadata.topics {
-                            (tag(topic))
+                        @for tag_text in self.tags() {
+                            (tag(tag_text))
                         }
                     }
                 }
@@ -121,10 +142,10 @@ impl BlogEntry {
     }
 }
 
-fn tag(topic: &str) -> Markup {
+fn tag(topic: impl AsRef<str>) -> Markup {
     html! {
         ."content-center px-1 text-xs rounded opacity-80 w-fit h-fit outline-1 outline-primary text-primary py-[1px]" {
-            (topic)
+            (topic.as_ref())
         }
     }
 }
