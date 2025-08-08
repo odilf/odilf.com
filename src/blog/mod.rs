@@ -172,8 +172,8 @@ impl Render for BlogEntry {
                     (self.metadata.date.strftime("%d %b, %Y").to_string())
                 }
                 ."flex-1" {}
-                @for topic in &self.metadata.topics {
-                    (tag(topic))
+                @for tag_text in self.tags() {
+                    (tag(tag_text))
                 }
             }
             ."prose pb-8" lang=(self.metadata.lang.html_name()) {
