@@ -10,7 +10,7 @@ pub fn shell(content: Markup) -> Markup {
             head {
                 meta charset="UTF-8" {}
                 meta name="viewport" content="width=device-width, initial-scale=1.0" {}
-                title text="odilf's site" {}
+                title { "odilf's site" }
                 link href="/static/app.css" rel="stylesheet" {}
 
                 link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/rss.xml" {}
