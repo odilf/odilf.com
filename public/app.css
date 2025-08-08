@@ -78,12 +78,22 @@ body {
     }
 
     .prose {
+        counter-reset: heading;
+        h2:before {
+            content: counter(heading) ") ";
+            counter-increment: heading;
+        }
         h2 {
+            counter-reset: subheading;
             font-size: var(--text-2xl);
         }
 
         h3 {
             font-size: var(--text-xl);
+        }
+        h3:before {
+            content: counter(heading) "." counter(subheading) ") ";
+            counter-increment: subheading;
         }
 
         h4 {

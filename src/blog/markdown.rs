@@ -89,7 +89,7 @@ pub fn parse(input: &str, referenced_links: &mut Vec<String>) -> MarkdownData {
     for node in root.descendants() {
         match &mut node.data.borrow_mut().value {
             // Increase the levels of all heading by one, since the title is going to be the first.
-            NodeValue::Heading(heading_node) => heading_node.level += 1,
+            NodeValue::Heading(heading) => heading.level += 1,
             NodeValue::Image(img) => {
                 referenced_links.push(img.url.clone());
                 img.url = PathBuf::from("/blog")
