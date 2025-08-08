@@ -60,7 +60,7 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
     fs::create_dir_all(&blog_output)
         .wrap_err_with(|| format!("Couldn't create blog path at {blog_output:?}"))?;
 
-    let _span = tracing::info!(?blog_output, ?blog_path);
+    tracing::info!(?blog_output, ?blog_path);
 
     let mut referenced_urls = Vec::new();
     let mut blog_entries = fs::read_dir(&blog_path)?
@@ -97,7 +97,7 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
 
             // TODO: This shouldn't need to allocate
             save_page(
-                &format!("blog/{}/index.html", entry.slug),
+                format!("blog/{}/index.html", entry.slug),
                 entry.render(),
                 output,
             )?;
@@ -139,7 +139,7 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
 fn copy_public_to_static(output: &Path) -> eyre::Result<()> {
     // From https://stackoverflow.com/questions/26958489/how-to-copy-a-folder-recursively-in-rust
     fn copy_dir_all(src: &Path, dst: &Path) -> io::Result<()> {
-        fs::create_dir_all(&dst)?;
+        fs::create_dir_all(dst)?;
         for entry in fs::read_dir(src)? {
             let entry = entry?;
             let ty = entry.file_type()?;

@@ -79,7 +79,7 @@ impl BlogEntry {
             html,
             summary,
             word_count,
-        } = markdown::parse(&content, referenced_links);
+        } = markdown::parse(content, referenced_links);
 
         Ok(Some(Self {
             slug: slug.into(),
@@ -108,7 +108,7 @@ impl BlogEntry {
     pub fn render_summary(&self) -> Markup {
         let mut topic_classes = String::from("blog-entry");
         for topic in &self.metadata.topics {
-            topic_classes.push_str(" ");
+            topic_classes.push(' ');
             topic_classes.push_str("topic-");
             topic_classes.push_str(topic);
         }
@@ -138,12 +138,12 @@ impl BlogEntry {
 
                     ."no-underline grid gap-1" {
                         ."flex gap-1 justify-evenly" {
-                            @for tag_text in self.tags().take((self.num_tags() + 1) / 2) {
+                            @for tag_text in self.tags().take(self.num_tags().div_ceil(2)) {
                                 (tag(tag_text))
                             }
                         }
                         ."flex gap-1 justify-evenly" {
-                            @for tag_text in self.tags().skip((self.num_tags() + 1) / 2) {
+                            @for tag_text in self.tags().skip(self.num_tags().div_ceil(2)) {
                                 (tag(tag_text))
                             }
                         }

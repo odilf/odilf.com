@@ -16,7 +16,7 @@ pub fn parse_metadata(content: &str) -> eyre::Result<BlogMetadata> {
     let frontmatter_parser = Matter::<YAML>::new();
 
     let metadata = frontmatter_parser
-        .parse(&content)
+        .parse(content)
         .wrap_err("Couldn't parse frontmatter")?;
 
     metadata.data.wrap_err("Frontmatter not found")
@@ -160,10 +160,10 @@ fn render_math<'a>(
             .display_mode(display_math)
             .build()
             .unwrap();
-        let html = katex::render_with_opts(&literal, &opts).unwrap();
+        let html = katex::render_with_opts(literal, &opts).unwrap();
 
         // TODO: This sometimes overflows uglily
-        write!(context, "{}", html)?;
+        write!(context, "{html}")?;
     }
 
     Ok(ChildRendering::HTML)
