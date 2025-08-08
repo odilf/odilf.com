@@ -52,7 +52,7 @@ pub fn parse(input: &str, referenced_links: &mut Vec<String>) -> MarkdownData {
 
     // Get summary
     let summary = {
-        const FIRST_LINE_MIN_LENGTH: usize = 180;
+        const FIRST_LINE_MIN_LENGTH: usize = 250;
 
         let mut summary = String::new();
         let mut push_text = |text: &str| {

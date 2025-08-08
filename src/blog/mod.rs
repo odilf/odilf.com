@@ -96,7 +96,13 @@ impl BlogEntry {
             .topics
             .iter()
             .map(|tag| Cow::Borrowed(tag.as_str()))
-            .chain(once(Cow::Owned(format!("{} words", self.word_count))))
+            .chain(once(Cow::Owned(format!(
+                "{:.1}k words",
+                self.word_count as f32 / 1000.0
+            ))))
+    }
+    pub fn num_tags(&self) -> usize {
+        self.metadata.topics.len() + 1
     }
 
     pub fn render_summary(&self) -> Markup {
@@ -124,16 +130,22 @@ impl BlogEntry {
                 }
 
                 ."flex gap-2 text-primary" {
-
                     ."flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
                         style="text-decoration: none"
                     {
                         (self.summary)
                     }
 
-                    ."flex flex-wrap gap-1 justify-evenly no-underline max-w-[30%] w-[15%]" {
-                        @for tag_text in self.tags() {
-                            (tag(tag_text))
+                    ."no-underline grid gap-1" {
+                        ."flex gap-1 justify-evenly" {
+                            @for tag_text in self.tags().take((self.num_tags() + 1) / 2) {
+                                (tag(tag_text))
+                            }
+                        }
+                        ."flex gap-1 justify-evenly" {
+                            @for tag_text in self.tags().skip((self.num_tags() + 1) / 2) {
+                                (tag(tag_text))
+                            }
                         }
                     }
                 }
@@ -144,7 +156,7 @@ impl BlogEntry {
 
 fn tag(topic: impl AsRef<str>) -> Markup {
     html! {
-        ."content-center px-1 text-xs rounded opacity-80 w-fit h-fit outline-1 outline-primary text-primary py-[1px]" {
+        ."content-center px-1 text-xs rounded-xs opacity-80 w-fit h-fit outline-1 outline-primary/50 text-primary py-[1px]" {
             (topic.as_ref())
         }
     }
