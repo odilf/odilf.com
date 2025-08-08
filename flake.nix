@@ -44,6 +44,9 @@
               pkgs.static-web-server
               pkgs.wrangler
 
+              (pkgs.writeShellScriptBin "deploy" ''
+                cargo run --release && wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
+              '')
             ];
 
             ODILF_BLOG_PATH = "/Users/odilf/brain/personal/writing";
