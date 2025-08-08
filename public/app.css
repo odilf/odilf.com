@@ -18,6 +18,7 @@
     --theme-color-neutral: oklch(3.97% 0.0074 99);
     --theme-color-primary: oklch(99.99996% 0.000345 99);
     --theme-color-primary-intense: oklch(0.94 0.1011 96);
+    --theme-color-primary-soft: oklch(0.87 0.0111 96);
     --theme-color-secondary: oklch(92.5% 0.0937 322.41);
     --theme-color-tertiary: oklch(88.38% 0.0493 250.94);
 
@@ -78,6 +79,8 @@ body {
     }
 
     .prose {
+        color: var(--theme-color-primary-soft);
+
         counter-reset: heading;
         h2:before {
             content: counter(heading) ") ";
@@ -100,12 +103,7 @@ body {
             font-size: var(--text-lg);
         }
 
-        p,
-        ul,
-        pre,
-        ol,
-        blockquote {
-            opacity: 80%;
+        p {
             margin-bottom: calc(var(--spacing) * 4);
         }
 
@@ -117,6 +115,10 @@ body {
         ol > li {
             list-style: decimal-leading-zero;
             margin-left: 4ch;
+        }
+
+        li > p {
+            margin-bottom: 0px;
         }
 
         .footnotes {
