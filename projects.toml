@@ -1,0 +1,222 @@
+last_fetched = "2025-08-10T17:50:55.535359Z"
+
+[projects.identity-crisis]
+description = "A social question game"
+source_code_url = "https://github.com/odilf/identity-crisis"
+website_url = "http://whoami.odilf.com/"
+creation_date = "2025-07-15T08:14:58Z"
+last_update = "2025-07-21T10:08:05Z"
+language = "TypeScript"
+topics = []
+# image_url = "/static/project-images/identity-crisis.png"
+
+[projects.norcina]
+description = "Rubik's cube library and timer"
+source_code_url = "https://github.com/odilf/norcina"
+creation_date = "2025-07-03T17:19:06Z"
+last_update = "2025-07-06T22:16:13Z"
+language = "Rust"
+topics = []
+
+[projects.dotfiles]
+description = "My mostly nix-based system configurations"
+source_code_url = "https://github.com/odilf/dotfiles"
+creation_date = "2023-05-26T16:53:34Z"
+last_update = "2025-08-09T08:27:23Z"
+language = "Nix"
+topics = []
+
+[projects."odilf.com"]
+description = "Source code for the website you're currently viewing"
+source_code_url = "https://github.com/odilf/odilf.com"
+website_url = "http://www.odilf.com/"
+creation_date = "2021-10-28T21:37:08Z"
+last_update = "2025-08-08T15:49:52Z"
+language = "Rust"
+topics = ["homepage", "personal"]
+
+[projects.FAM]
+description = "Source code that makes the official Maggie fanpage work. "
+source_code_url = "https://github.com/odilf/FAM"
+website_url = "https://famm.odilf.com"
+creation_date = "2021-10-28T09:32:37Z"
+last_update = "2022-05-24T12:33:26Z"
+language = "Svelte"
+topics = ["cats", "fanpage"]
+image_url = "https://photos.odilf.com/api/assets/5011c5a8-f550-45b5-a770-753e9b26413d/thumbnail?slug=maggie-for-odilf-com&size=preview&c=3QcKHQQNMlaKmqrql4OUV0rAdQRM"
+
+[projects.churri]
+description = "A cute countdown timer"
+source_code_url = "https://github.com/odilf/churri"
+website_url = "https://churri.odilf.com"
+creation_date = "2024-05-13T09:42:20Z"
+last_update = "2025-07-19T21:04:41Z"
+language = "Svelte"
+topics = []
+
+[projects.smt-guidance-experiments]
+description = "Experiments (for TU Delft CSE3000 course)"
+source_code_url = "https://github.com/odilf/smt-guidance-experiments"
+creation_date = "2025-05-19T10:55:58Z"
+last_update = "2025-06-25T11:49:50Z"
+language = "Rust"
+topics = ["tudelft-cse-research-project"]
+
+[projects.bachelor-thesis]
+description = "Bachelor thesis at TU Delft (CSE3000)"
+source_code_url = "https://github.com/odilf/bachelor-thesis"
+creation_date = "2025-06-21T14:54:39Z"
+last_update = "2025-06-25T14:03:24Z"
+language = "Typst"
+topics = ["tudelft-cse-research-project"]
+
+[projects.chessagon]
+description = "Hexagonal chess"
+source_code_url = "https://github.com/odilf/chessagon"
+website_url = "https://chessagon.odilf.com"
+creation_date = "2023-09-26T07:01:33Z"
+last_update = "2025-04-19T18:10:44Z"
+language = "Rust"
+topics = []
+
+[projects.sentouki]
+description = "σεντούκι - Web file browser for self hosting"
+source_code_url = "https://github.com/odilf/sentouki"
+creation_date = "2024-02-26T16:48:20Z"
+last_update = "2025-02-04T22:57:10Z"
+language = "Svelte"
+topics = []
+
+[projects.quantum-key-exchange]
+description = "Simple quantum key exchange implementation (simulation)"
+source_code_url = "https://github.com/odilf/quantum-key-exchange"
+creation_date = "2025-02-01T12:03:08Z"
+last_update = "2025-02-01T12:04:53Z"
+language = "Rust"
+topics = []
+
+[projects.indecision]
+description = "Rust + Python framework for modeling highly selective particles"
+source_code_url = "https://github.com/odilf/indecision"
+creation_date = "2025-01-20T19:01:43Z"
+last_update = "2025-01-30T09:31:19Z"
+language = "Jupyter Notebook"
+topics = []
+
+[projects.hext-boards]
+description = "A small library that renders hexagonal boards with text on the terminal"
+source_code_url = "https://github.com/odilf/hext-boards"
+creation_date = "2022-12-25T08:55:25Z"
+last_update = "2025-01-17T12:24:13Z"
+language = "Rust"
+topics = []
+
+[projects.incipit]
+description = "Manager for running services on a home server"
+source_code_url = "https://github.com/odilf/incipit"
+creation_date = "2024-08-23T08:54:51Z"
+last_update = "2025-01-06T16:33:51Z"
+language = "Rust"
+topics = []
+
+[projects.elvish]
+description = "Overengineered Advent of Code framework - not quite Santa's elves"
+source_code_url = "https://github.com/odilf/elvish"
+creation_date = "2024-11-02T10:18:52Z"
+last_update = "2024-12-01T09:17:26Z"
+language = "Rust"
+topics = []
+
+[projects.pink]
+description = "A very minimal replacement based DSL, intended for math experimentation. "
+source_code_url = "https://github.com/odilf/pink"
+website_url = "https://pink.odilf.com/"
+creation_date = "2023-01-29T08:33:19Z"
+last_update = "2023-10-24T14:47:44Z"
+language = "Rust"
+topics = []
+
+[projects.barbarosa]
+description = "Original attempt at a rubik's cube library"
+source_code_url = "https://github.com/odilf/barbarosa"
+creation_date = "2021-09-06T08:49:50Z"
+last_update = "2023-08-14T11:44:26Z"
+language = "Rust"
+topics = ["3x3", "cube", "Rubik's cube", "3x3 solver", "rust"]
+
+[projects.modern-docs-rs]
+description = "Nicer theme for docs.rs, that I actually daily drive."
+source_code_url = "https://github.com/odilf/modern-docs-rs"
+creation_date = "2023-07-13T02:32:33Z"
+last_update = "2023-07-13T02:32:39Z"
+language = "CSS"
+topics = ["docs-rs", "rust", "theme"]
+
+[projects.fosbury]
+description = "Minimal CSS scaffolding with overridable, sensible defaults"
+source_code_url = "https://github.com/odilf/fosbury"
+website_url = "https://fosbury.vercel.app"
+creation_date = "2023-03-01T21:28:18Z"
+last_update = "2023-03-02T19:47:52Z"
+language = "Svelte"
+topics = []
+
+[projects.daedalus]
+description = "A game about a labyrinth in x86 assembly"
+source_code_url = "https://github.com/odilf/daedalus"
+creation_date = "2022-10-24T19:39:39Z"
+last_update = "2022-11-24T18:04:43Z"
+language = "Assembly"
+topics = []
+
+[projects.Pistol]
+description = "Original attempt at a modern and elegant speedcubing timer "
+source_code_url = "https://github.com/odilf/Pistol"
+website_url = "http://www.pistol.odilf.com/"
+creation_date = "2021-05-11T13:22:33Z"
+last_update = "2022-06-19T12:58:23Z"
+language = "Svelte"
+topics = ["rubik", "rubik-s", "speedcubing", "svelte", "timer"]
+
+[projects.Dveco]
+description = "A recursive lossy image compressor based on standard deviation, clearly worse than JPEG"
+source_code_url = "https://github.com/odilf/Dveco"
+creation_date = "2022-02-08T19:39:02Z"
+last_update = "2022-04-27T08:53:51Z"
+language = "Julia"
+topics = []
+
+[projects.Minigames]
+description = "An assortment of minigames"
+source_code_url = "https://github.com/odilf/Minigames"
+website_url = "https://minigames.odilf.com"
+creation_date = "2022-04-03T19:44:26Z"
+last_update = "2022-04-14T18:14:01Z"
+language = "Svelte"
+topics = []
+
+[projects.spasmodic-consonizer]
+description = "A fuzzy consonance analyser written in Julia. "
+source_code_url = "https://github.com/odilf/spasmodic-consonizer"
+creation_date = "2022-02-13T16:54:01Z"
+last_update = "2022-02-22T20:05:52Z"
+language = "Julia"
+topics = ["analyzer", "data", "harmony", "julia", "music", "pluto"]
+
+[projects.rummy]
+description = "An online version of the board game, Rummy."
+source_code_url = "https://github.com/odilf/rummy"
+website_url = "https://rummy.odilf.com"
+creation_date = "2021-12-26T10:36:53Z"
+last_update = "2022-01-09T11:00:29Z"
+language = "Svelte"
+topics = []
+
+[projects.baselga-timer]
+description = "Time arrival calculator"
+source_code_url = "https://github.com/odilf/baselga-timer"
+website_url = "https://baselga.odilf.com"
+creation_date = "2021-10-15T11:52:13Z"
+last_update = "2021-10-16T14:05:56Z"
+language = "Svelte"
+topics = []

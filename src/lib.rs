@@ -2,6 +2,7 @@ use maud::{DOCTYPE, Markup, html};
 
 pub mod blog;
 pub mod components;
+pub mod projects;
 
 pub fn shell(content: Markup) -> Markup {
     html! {
@@ -23,16 +24,23 @@ pub fn shell(content: Markup) -> Markup {
 }
 
 pub fn home() -> Markup {
-    let links = [("/blog", "blog"), ("/about", "about")];
+    let links = [
+        ("/blog", "blog", blog::DESC),
+        ("/projects", "projects", projects::DESC),
+        ("/about", "about", "information about me and CV"),
+    ];
 
     html! {
         h1 { "hi, i'm Ody 👋" }
         p."mb-4 faint" { "go ahead and take a look at what's here ^^" }
 
-        ol {
-            @for (href, display) in links {
+        ol."flex flex-col gap-2" {
+            @for (href, display, description) in links {
                 li."text-xl hover:underline text-secondary" {
-                    a href=(href) { "> " (display) }
+                    a href=(href) {
+                        p{ "> " (display) }
+                        p."text-sm text-primary-soft" { (description) }
+                    }
                 }
             }
         }

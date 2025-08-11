@@ -7,11 +7,13 @@ use std::borrow::Cow;
 
 use crate::{
     blog::markdown::MarkdownData,
-    components::{self, back},
+    components::{self, back, tag},
 };
 use color_eyre::eyre;
 use maud::{Markup, PreEscaped, Render, html};
 use serde::{Deserialize, Serialize};
+
+pub const DESC: &str = "some thoughts, stories and reflections from throughout the years.";
 
 /// Blog home page, with the blog entries.
 pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
@@ -25,9 +27,7 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a BlogEntry>) -> Markup {
         (back())
 
         h1 { "blog" }
-        p."pb-4 faint" {
-            "some thoughts, stories and reflections from throughout the years."
-        }
+        p."pb-4 faint" { (DESC) }
 
         ."flex mb-4 gap-2" {
             button #all-tab disabled="true" { "all" }
@@ -125,7 +125,7 @@ impl BlogEntry {
                     ."flex-1 font-bold text-lg" { (self.metadata.title) }
 
                     ."font-light text-primary" {
-                        (self.metadata.date.strftime("%d %b, %Y").to_string())
+                        (self.metadata.date.strftime("%d %b, %Y"))
                     }
                 }
 
@@ -154,14 +154,6 @@ impl BlogEntry {
     }
 }
 
-fn tag(topic: impl AsRef<str>) -> Markup {
-    html! {
-        ."content-center px-1 text-xs rounded-xs opacity-80 w-fit h-fit outline-1 outline-primary/50 text-primary py-[1px]" {
-            (topic.as_ref())
-        }
-    }
-}
-
 impl Render for BlogEntry {
     fn render(&self) -> Markup {
         html! {
@@ -169,7 +161,7 @@ impl Render for BlogEntry {
             h1 { (self.metadata.title) }
             ."flex gap-2 mb-6" {
                 ."font-light text-primary" {
-                    (self.metadata.date.strftime("%d %b, %Y").to_string())
+                    (self.metadata.date.strftime("%d %b, %Y"))
                 }
                 ."flex-1" {}
                 @for tag_text in self.tags() {

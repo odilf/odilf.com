@@ -3,7 +3,7 @@ use maud::{Markup, Render};
 use odilf_site::{
     about,
     blog::{self, BlogEntry},
-    home, shell,
+    home, projects, shell,
 };
 use std::{
     cmp::Reverse,
@@ -33,6 +33,7 @@ fn main() -> eyre::Result<()> {
     save_page("index.html", home(), &output)?;
     save_page("about/index.html", about(), &output)?;
     generate_blog(&output)?;
+    generate_projects(&output)?;
     copy_public_to_static(&output)?;
     generate_tailwind("static/app.css", &output)?;
 
@@ -132,6 +133,17 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
         let dst = blog_output.join(&url);
         fs::copy(src, dst).wrap_err_with(|| format!("Couldn't copy referenced url ({url})"))?;
     }
+
+    Ok(())
+}
+
+fn generate_projects(output: &Path) -> eyre::Result<()> {
+    let src = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("projects.toml");
+
+    let project_data =
+        toml::from_str(&fs::read_to_string(src)?).wrap_err("Couldn't read projects.toml")?;
+
+    save_page("projects/index.html", projects::home(project_data), output)?;
 
     Ok(())
 }

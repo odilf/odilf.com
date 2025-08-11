@@ -7,3 +7,12 @@ pub fn back() -> Markup {
         }
     }
 }
+
+pub fn tag(topic: impl AsRef<str>) -> Markup {
+    html! {
+        ."content-center text-center whitespace-nowrap px-1 text-xs rounded-xs
+        opacity-80 w-fit h-fit outline-1 outline-primary/50 text-primary py-[1px]" {
+            (topic.as_ref())
+        }
+    }
+}
