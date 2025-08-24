@@ -156,6 +156,12 @@ impl BlogEntry {
 
 impl Render for BlogEntry {
     fn render(&self) -> Markup {
+        let numbered_headings = if self.metadata.numbered_headings.unwrap_or(true) {
+            "numbered-headings"
+        } else {
+            ""
+        };
+
         html! {
             (components::back())
             h1 { (self.metadata.title) }
@@ -168,7 +174,7 @@ impl Render for BlogEntry {
                     (tag(tag_text))
                 }
             }
-            ."prose pb-8" lang=(self.metadata.lang.html_name()) {
+            .(format!("prose pb-8 {numbered_headings}")) lang=(self.metadata.lang.html_name()) {
                 (PreEscaped(&self.html))
             }
 
@@ -184,6 +190,7 @@ impl Render for BlogEntry {
 
 /// Front-matter of blog.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct BlogMetadata {
     pub title: String,
     pub date: jiff::civil::Date,
@@ -192,6 +199,8 @@ pub struct BlogMetadata {
     pub topics: Vec<String>,
     #[serde(default)]
     pub lang: Language,
+    #[serde(default)]
+    pub numbered_headings: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]

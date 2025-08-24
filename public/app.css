@@ -32,7 +32,6 @@
     }
 }
 
-/* TODO: This doesn't seem to work */
 @theme inline {
     --color-neutral: var(--theme-color-neutral);
     --color-primary-intense: var(--theme-color-primary-intense);
@@ -83,22 +82,13 @@ body {
     .prose {
         color: var(--theme-color-primary-soft);
 
-        counter-reset: heading;
-        h2:before {
-            content: counter(heading) ") ";
-            counter-increment: heading;
-        }
+
         h2 {
-            counter-reset: subheading;
             font-size: var(--text-2xl);
         }
 
         h3 {
             font-size: var(--text-xl);
-        }
-        h3:before {
-            content: counter(heading) "." counter(subheading) ") ";
-            counter-increment: subheading;
         }
 
         h4 {
@@ -151,6 +141,23 @@ body {
             figcaption {
                 @apply w-fit mx-auto text-sm text-tertiary mt-1 mb-2;
             }
+        }
+    }
+
+    .numbered-headings {
+        counter-reset: heading;
+
+        h2:before {
+            content: counter(heading) ") ";
+            counter-increment: heading;
+        }
+        h2 {
+            counter-reset: subheading;
+        }
+
+        h3:before {
+            content: counter(heading) "." counter(subheading) ") ";
+            counter-increment: subheading;
         }
     }
 
