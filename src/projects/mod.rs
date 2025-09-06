@@ -41,7 +41,7 @@ pub fn home(projects: Projects) -> Markup {
                     background-position: 50% 40%;
                     background-size: cover;
                     background-repeat: no-repeat;
-                ", project.image_url.as_ref().map(|s| s.as_str()).unwrap_or(""))) {
+                ", project.image_url.as_deref().unwrap_or(""))) {
                     div."flex-1" {
                         h2."text-xl font-bold text-secondary pt-0 text-balance w-full" {
                             a href=(project.main_link()) target="_blank" rel="noopener noreferrer" { span."opacity-50" { "> " } (name) }

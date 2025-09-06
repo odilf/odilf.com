@@ -36,7 +36,7 @@ fn main() -> eyre::Result<()> {
         .init();
 
     let projects = PERSONAL_PROJECTS
-        .into_iter()
+        .iter()
         .map(|project_name| projects::fetch::get_github_single(project_name))
         .collect::<eyre::Result<_>>()?;
 

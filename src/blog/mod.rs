@@ -101,7 +101,7 @@ impl BlogEntry {
                 self.word_count as f32 / 1000.0
             ))))
     }
-    pub fn num_tags(&self) -> usize {
+    pub const fn num_tags(&self) -> usize {
         self.metadata.topics.len() + 1
     }
 
@@ -211,10 +211,10 @@ pub enum Language {
 }
 
 impl Language {
-    pub fn html_name(self) -> &'static str {
+    pub const fn html_name(self) -> &'static str {
         match self {
-            Language::English => "en",
-            Language::Spanish => "es",
+            Self::English => "en",
+            Self::Spanish => "es",
         }
     }
 }
