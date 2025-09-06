@@ -61,6 +61,13 @@ pub fn about() -> Markup {
             p {
                 "I also like to make and play music; mainly with the bass, the keyboard and the computer"
             }
+            p {
+                "You can download my CV here:"
+                ul {
+                    li { a href="https://github.com/odilf/cv/releases/latest/download/cv-english.pdf" { "CV (English)" }}
+                    li { a href="https://github.com/odilf/cv/releases/latest/download/cv-spanish.pdf" { "CV (Spanish)" }}
+                }
+            }
         }
     }
 }
