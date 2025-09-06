@@ -34,8 +34,8 @@ fn main() -> eyre::Result<()> {
     save_page("about/index.html", about(), &output)?;
     generate_blog(&output)?;
     generate_projects(&output)?;
-    copy_public_to_static(&output)?;
     generate_tailwind("static/app.css", &output)?;
+    copy_favicon(&output)?;
 
     Ok(())
 }
@@ -148,6 +148,8 @@ fn generate_projects(output: &Path) -> eyre::Result<()> {
     Ok(())
 }
 
+// In case it's needed in the future
+#[allow(unused)]
 fn copy_public_to_static(output: &Path) -> eyre::Result<()> {
     // From https://stackoverflow.com/questions/26958489/how-to-copy-a-folder-recursively-in-rust
     fn copy_dir_all(src: &Path, dst: &Path) -> io::Result<()> {
@@ -190,5 +192,11 @@ fn generate_tailwind(path: impl AsRef<Path>, output: &Path) -> eyre::Result<()> 
 
     tracing::info!("Succesfully generated tailwind.");
 
+    Ok(())
+}
+
+fn copy_favicon(output: &Path) -> eyre::Result<()> {
+    fs::copy("public/logo.svg", output.join("favicon.svg"))?;
+    fs::copy("public/logo.png", output.join("favicon.png"))?;
     Ok(())
 }

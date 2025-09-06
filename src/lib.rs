@@ -14,6 +14,9 @@ pub fn shell(content: Markup) -> Markup {
                 title { "odilf's site" }
                 link href="/static/app.css" rel="stylesheet" {}
 
+                link rel="icon" href="/favicon.svg" {}
+                link rel="icon" href="/favicon.png" {}
+
                 link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/rss.xml" {}
                 link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" {}
             }
