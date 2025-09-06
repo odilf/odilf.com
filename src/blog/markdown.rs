@@ -1,11 +1,12 @@
 use crate::blog::BlogMetadata;
 use color_eyre::eyre::{self, ContextCompat, WrapErr as _};
 use comrak::{
-    html::{format_document_with_formatter, format_node_default, ChildRendering, Context},
+    ExtensionOptions, Options, RenderOptions,
+    html::{ChildRendering, Context, format_document_with_formatter, format_node_default},
     nodes::{AstNode, NodeValue},
-    parse_document, ExtensionOptions, Options, RenderOptions,
+    parse_document,
 };
-use gray_matter::{engine::YAML, Matter};
+use gray_matter::{Matter, engine::YAML};
 use std::{
     io::{self, Write},
     path::PathBuf,
