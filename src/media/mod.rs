@@ -110,11 +110,17 @@ impl MediaLog {
                             }
                         }
 
-                        ."text-primary text-2xl" {
-                            (self.rating)
+                        ."flex justify-between" {
+                            ."text-primary text-2xl" {
+                                (self.rating)
+                            }
+
+                            ."text-tertiary faint" {
+                                "(" (self.typ) ")"
+                            }
                         }
 
-                        ." text-primary" {
+                        ." text-primary faint" {
                             ."flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
                                 style="text-decoration: none"
                             {
