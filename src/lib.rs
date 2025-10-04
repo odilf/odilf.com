@@ -2,6 +2,7 @@ use maud::{DOCTYPE, Markup, html};
 
 pub mod blog;
 pub mod components;
+pub mod media;
 pub mod projects;
 
 pub fn shell(content: Markup) -> Markup {
@@ -29,6 +30,7 @@ pub fn shell(content: Markup) -> Markup {
 pub fn home() -> Markup {
     let links = [
         ("/blog", "blog", blog::DESC),
+        ("/media-log", "media log", media::DESC),
         ("/projects", "projects", projects::DESC),
         ("/about", "about", "information about me and CV"),
     ];

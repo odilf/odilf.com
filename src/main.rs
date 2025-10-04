@@ -3,7 +3,9 @@ use maud::{Markup, Render};
 use odilf_site::{
     about,
     blog::{self, BlogEntry},
-    home, projects, shell,
+    home,
+    media::{self, MediaLog},
+    projects, shell,
 };
 use std::{
     cmp::Reverse,
@@ -14,7 +16,7 @@ use std::{
 
 fn main() -> eyre::Result<()> {
     tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::TRACE)
+        .with_max_level(tracing::Level::DEBUG)
         .init();
     let output = {
         #[cfg(debug_assertions)]
@@ -34,6 +36,7 @@ fn main() -> eyre::Result<()> {
     save_page("about/index.html", about(), &output)?;
     generate_blog(&output)?;
     generate_projects(&output)?;
+    generate_media_log(&output)?;
     generate_tailwind("static/app.css", &output)?;
     copy_favicon(&output)?;
 
@@ -144,6 +147,76 @@ fn generate_projects(output: &Path) -> eyre::Result<()> {
         toml::from_str(&fs::read_to_string(src)?).wrap_err("Couldn't read projects.toml")?;
 
     save_page("projects/index.html", projects::home(project_data), output)?;
+
+    Ok(())
+}
+
+// TODO: Basically duplicated from blog
+fn generate_media_log(output: &Path) -> eyre::Result<()> {
+    let media_path = PathBuf::from(
+        std::env::var("ODILF_MEDIA_LOG_PATH")
+            .wrap_err("Couldn't get `ODILF_MEDIA_LOG` env variable.")?,
+    );
+
+    let media_output = output.join("media-log");
+    fs::create_dir_all(&media_output)
+        .wrap_err_with(|| format!("Couldn't create media log path at {media_output:?}"))?;
+
+    tracing::info!(?media_output, ?media_path);
+
+    let mut media_entries = fs::read_dir(&media_path)?
+        .map(|entry| {
+            let entry = entry?;
+            let mut path = entry.path();
+            if path.is_dir() {
+                tracing::debug!("Skipping directory");
+                return eyre::Ok(None);
+            }
+
+            if path.extension().and_then(|ext| ext.to_str()) != Some("md") {
+                tracing::info!("Skipping non `.md` file");
+                return Ok(None);
+            }
+
+            tracing::debug!(?path, "Reading media log");
+
+            let post_content = fs::read_to_string(&path).wrap_err("Couldn't read media log")?;
+
+            path.set_extension("");
+            let slug = path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .wrap_err("Couldn't get file name")?;
+
+            let entry = MediaLog::from_slug_and_content(slug, &post_content)?;
+
+            tracing::info!(?path, "Generating blog page");
+
+            // TODO: This shouldn't need to allocate
+            save_page(
+                format!("media-log/{}/index.html", entry.slug),
+                entry.render(),
+                output,
+            )?;
+
+            Ok(Some(entry))
+        })
+        .flat_map(|result| match result {
+            Ok(Some(entry)) => Some(entry),
+            Ok(None) => None,
+            Err(err) => {
+                tracing::error!(?err);
+                None
+            }
+        })
+        .collect::<Vec<_>>();
+
+    media_entries.sort_by_key(|media_log| Reverse(media_log.date));
+    save_page(
+        "media-log/index.html",
+        media::home(media_entries.iter()),
+        output,
+    )?;
 
     Ok(())
 }

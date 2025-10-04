@@ -1,6 +1,7 @@
 let buttons = {
-  dev: document.getElementById("development-tab"),
-  personal: document.getElementById("personal-tab"),
+  book: document.getElementById("books-tab"),
+  movie: document.getElementById("movies-tab"),
+  videogame: document.getElementById("videogames-tab"),
   all: document.getElementById("all-tab"),
 };
 
@@ -13,11 +14,11 @@ for (const name in buttons) {
     active_tab.disabled = true;
 
     if (name === "all") {
-      document.querySelectorAll(".blog-entry").forEach((item) => {
+      document.querySelectorAll(".media-log-entry").forEach((item) => {
         item.style = "";
       });
     } else {
-      document.querySelectorAll(".blog-entry").forEach((item) => {
+      document.querySelectorAll(".media-log-entry").forEach((item) => {
         item.style = "display: none;";
       });
 
