@@ -15,6 +15,7 @@ use std::{
 };
 
 fn main() -> eyre::Result<()> {
+    dotenvy::dotenv()?;
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();

@@ -7,6 +7,7 @@ default-run = "main"
 [dependencies]
 color-eyre = "0.6.5"
 comrak = "0.40.0"
+dotenvy = "0.15.7"
 gray_matter = "0.3.2"
 jiff = { version = "0.2.15", features = ["serde"] }
 katex = "0.4.6"
