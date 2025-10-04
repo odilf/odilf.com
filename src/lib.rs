@@ -73,6 +73,10 @@ pub fn about() -> Markup {
                     li { a href="https://github.com/odilf/cv/releases/latest/download/cv-spanish.pdf" { "CV (Spanish)" }}
                 }
             }
+
+            object."pt-8" data="https://github.com/odilf/cv/releases/latest/download/cv-english.pdf" type="application/pdf" width="100%" style="aspect-ratio: 0.67;" {
+                "Your browser can't render this PDF, please use the links above."
+            }
         }
     }
 }
