@@ -60,7 +60,30 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a MediaLog>) -> Markup {
 impl Render for MediaLog {
     fn render(&self) -> maud::Markup {
         html! {
+            (back())
             h1 { (self.title) }
+            ."flex gap-2" {
+                ."flex-1" {
+                    ."flex justify-between" {
+                        ."text-primary text-2xl" {
+                            (self.rating)
+                        }
+
+                        ."text-tertiary faint" {
+                            (self.date)
+                        }
+                    }
+
+                    ."font-light text-primary" {
+                    }
+
+                    ." text-primary faint" {
+                        (PreEscaped(self.review.as_ref().unwrap()))
+                    }
+                }
+
+                img."w-[30%]" src=(self.image_url) alt=(self.title) {}
+            }
         }
     }
 }

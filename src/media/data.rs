@@ -107,9 +107,10 @@ fn get_wikipedia_image_url(
         for (_, page) in pages {
             if let Some(imageinfo) = page["imageinfo"].as_array()
                 && let Some(first) = imageinfo.first()
-                    && let Some(url) = first["url"].as_str() {
-                        return Ok(Some(url.to_string()));
-                    }
+                && let Some(url) = first["url"].as_str()
+            {
+                return Ok(Some(url.to_string()));
+            }
         }
     }
 
