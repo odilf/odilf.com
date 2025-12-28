@@ -165,6 +165,7 @@ pub enum MediaType {
     Book,
     Movie,
     Videogame,
+    Music,
 }
 
 impl fmt::Display for MediaType {
@@ -173,6 +174,7 @@ impl fmt::Display for MediaType {
             Self::Book => "book",
             Self::Movie => "movie",
             Self::Videogame => "videogame",
+            Self::Music => "music",
         })
     }
 }

@@ -2,6 +2,7 @@ let buttons = {
   book: document.getElementById("books-tab"),
   movie: document.getElementById("movies-tab"),
   videogame: document.getElementById("videogames-tab"),
+  music: document.getElementById("music-tab"),
   all: document.getElementById("all-tab"),
 };
 
