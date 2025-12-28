@@ -190,7 +190,6 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
                 .wrap_err("Couldn't get file name")?;
 
             let entry = MediaLog::from_slug_and_content(slug, &post_content)?;
-
             tracing::info!(?path, "Generating blog page");
 
             // TODO: This shouldn't need to allocate
