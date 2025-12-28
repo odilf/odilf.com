@@ -161,7 +161,7 @@ impl MediaLog {
                         }
                     }
 
-                    img."w-[30%] h-full" src=(self.image_url) alt=(self.title) {}
+                    img."w-[30%] h-full" src=(self.image_url) alt=(format!("Cover of {}", self.title)) {}
                 }
             }
         }
