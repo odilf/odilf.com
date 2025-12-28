@@ -40,6 +40,7 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a MediaLog>) -> Markup {
             button #all-tab disabled="true" { "all" }
             button #books-tab { "books" }
             button #movies-tab { "movies" }
+            button #music-tab { "music" }
             button #videogames-tab { "videogames" }
         }
 
@@ -144,7 +145,7 @@ impl MediaLog {
                         }
 
                         ."flex justify-between" {
-                            ."text-primary text-2xl" {
+                            ."text-primary text-2xl drop-shadow-primary drop-shadow-[0_0_0_0.7rem]" {
                                 (self.rating)
                             }
 
@@ -153,10 +154,8 @@ impl MediaLog {
                             }
                         }
 
-                        ." text-primary faint" {
-                            ."flex-1 prose text-sm no-underline opacity-50 text-ellipsis h-min"
-                                style="text-decoration: none"
-                            {
+                        ."no-no-underline text-primary faint" {
+                            ."flex-1 prose text-sm opacity-50 text-ellipsis h-min line-clamp-3" {
                                 (PreEscaped(self.review.as_ref().unwrap()))
                             }
                         }

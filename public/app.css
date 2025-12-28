@@ -79,6 +79,15 @@ body {
         margin-inline: auto;
     }
 
+    /* Bodge to not show underlines in prose text: we just show an extra
+    underline on top of it of the color of the background, so it looks like
+    no underline */
+    .no-no-underline {
+        text-decoration: underline;
+        text-decoration-color: var(--color-neutral);
+        text-decoration-skip-ink: none;
+    }
+
     .prose {
         color: var(--theme-color-primary-soft);
         font-weight: 350;

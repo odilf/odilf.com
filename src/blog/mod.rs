@@ -132,13 +132,13 @@ impl BlogEntry {
                 }
 
                 ."flex gap-2 text-primary" {
-                    ."flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
+                    ."flex-1 text-sm no-no-underline opacity-50 line-clamp-2 text-ellipsis"
                         style="text-decoration: none"
                     {
                         (self.summary)
                     }
 
-                    ."no-underline grid gap-1" {
+                    ."no-no-underline grid gap-1" {
                         ."flex gap-1 justify-evenly" {
                             @for tag_text in self.tags().take(self.num_tags().div_ceil(2)) {
                                 (tag(tag_text))
@@ -158,11 +158,7 @@ impl BlogEntry {
 
 impl Render for BlogEntry {
     fn render(&self) -> Markup {
-        let numbered_headings = if self.metadata.numbered_headings.unwrap_or(true) {
-            "numbered-headings"
-        } else {
-            ""
-        };
+        let number_headings = self.metadata.numbered_headings.unwrap_or(true);
 
         html! {
             (components::back())
@@ -178,7 +174,7 @@ impl Render for BlogEntry {
                     (tag(tag_text))
                 }
             }
-            .(format!("prose pb-8 {numbered_headings}")) lang=(self.metadata.lang.html_name()) {
+            ."prose pb-8"."numbered-headings"[number_headings] lang=(self.metadata.lang.html_name()) {
                 (PreEscaped(&self.html))
             }
 
