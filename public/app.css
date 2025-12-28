@@ -23,12 +23,12 @@
     --theme-color-tertiary: oklch(88.38% 0.0493 250.94);
 
     @media (prefers-color-scheme: light) {
-        --theme-color-neutral: oklch(0.999 0.005 10);
+        --theme-color-neutral: oklch(0.9 0.005 236);
         --theme-color-primary: oklch(0.0559 0.0937 57.18);
-        --theme-color-primary-intense: oklch(0.64 0.2011 96);
+        --theme-color-primary-intense: oklch(0.6 0.301 90);
         --theme-color-primary-soft: oklch(0.31 0.0011 96);
         --theme-color-secondary: oklch(0.5382 0.1283 322.41);
-        --theme-color-tertiary: oklch(0.4176 0.1357 250.94);
+        --theme-color-tertiary: oklch(0.9 0.905 236);
     }
 }
 
