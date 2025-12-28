@@ -14,7 +14,7 @@ pub const DESC: &str = "logging and reviews of books, movies and videogames.";
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-pub struct MediaLog {
+pub struct MediaLog<ImageUrl = String> {
     pub title: String,
     // Slug is set after parsing.
     #[serde(skip)]
@@ -26,9 +26,7 @@ pub struct MediaLog {
     pub date: Date,
     pub urls: Vec<Url>,
     pub review: Option<String>,
-    // Image URL is set after parsing.
-    #[serde(skip)]
-    pub image_url: String,
+    pub image_url: ImageUrl,
 }
 
 pub fn home<'a>(entries: impl Iterator<Item = &'a MediaLog>) -> Markup {
@@ -77,7 +75,7 @@ impl Render for MediaLog {
                     ."font-light text-primary" {
                     }
 
-                    ." text-primary faint" {
+                    ."prose text-primary faint" {
                         (PreEscaped(self.review.as_ref().unwrap()))
                     }
                 }
@@ -111,9 +109,21 @@ impl MediaLog {
 
         log.review = (!content.is_empty()).then(|| comrak::markdown_to_html(content, &options));
         log.slug = slug.into();
-        log.image_url = data::get_image(log.urls.iter(), &log.slug)?;
+        let image_url = match log.image_url {
+            None => data::get_image(log.urls.iter(), &log.slug)?,
+            Some(url) => url,
+        };
 
-        Ok(log)
+        Ok(MediaLog {
+            title: log.title,
+            date: log.date,
+            slug: log.slug,
+            typ: log.typ,
+            rating: log.rating,
+            urls: log.urls,
+            review: log.review,
+            image_url,
+        })
     }
 
     pub fn render_summary(&self) -> Markup {
@@ -124,7 +134,7 @@ impl MediaLog {
                 ."flex gap-2" {
 
                     ."flex-1" {
-                        ."flex" {
+                        ."flex gap-2" {
                             ."text-primary pr-[1ch] text-xl" { ">" }
                             ."flex-1 font-bold text-lg text-xl" { (self.title) }
 
@@ -144,7 +154,7 @@ impl MediaLog {
                         }
 
                         ." text-primary faint" {
-                            ."flex-1 text-sm no-underline opacity-50 line-clamp-2 text-ellipsis"
+                            ."flex-1 prose text-sm no-underline opacity-50 text-ellipsis h-min"
                                 style="text-decoration: none"
                             {
                                 (PreEscaped(self.review.as_ref().unwrap()))
@@ -152,7 +162,7 @@ impl MediaLog {
                         }
                     }
 
-                    img."w-[30%]" src=(self.image_url) alt=(self.title) {}
+                    img."w-[30%] h-full" src=(self.image_url) alt=(self.title) {}
                 }
             }
         }

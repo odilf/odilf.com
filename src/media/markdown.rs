@@ -3,11 +3,11 @@ use gray_matter::{Matter, engine::YAML};
 
 use crate::media::MediaLog;
 
-pub fn parse_media_log(content: &str) -> eyre::Result<MediaLog> {
+pub fn parse_media_log(content: &str) -> eyre::Result<MediaLog<Option<String>>> {
     let frontmatter_parser = Matter::<YAML>::new();
 
     let media_log = frontmatter_parser
-        .parse::<MediaLog>(content)
+        .parse::<MediaLog<Option<String>>>(content)
         .wrap_err("Couldn't parse frontmatter")?;
 
     let media_log = media_log.data.wrap_err("Frontmatter not found")?;
