@@ -14,33 +14,41 @@ use crate::blog::BlogEntry;
 impl BlogEntry {
     pub fn rss(&self) -> eyre::Result<Markup> {
         let url = format!("https://odilf.com/blog/{}", self.slug);
-        let date = rfc2822::to_string(&self.metadata.date.to_zoned(TimeZone::system())?)?;
 
         Ok(html! {
             item {
                 title { (self.metadata.title) }
                 link { (url) }
                 description { (self.summary) }
-                pubDate { (date) }
+                @if let Some(date) = self.metadata.date {
+                    pubDate { (rfc2822::to_string(&date.to_zoned(TimeZone::system())?)?) }
+                }
                 guid isPermaLink="true" { (url) }
             }
         })
     }
 
-    pub fn atom(&self) -> eyre::Result<Markup> {
-        let url = format!("https://odilf.com/blog/{}", self.slug);
+    fn zoned_date(&self) -> eyre::Result<Option<Zoned>> {
         // This is a funny dance to strip out the timezone identifier.
         let tz = TimeZone::system();
-        let date = self.metadata.date.to_zoned(tz)?;
+        let Some(blog_date) = self.metadata.date else {
+            return Ok(None);
+        };
+        let date = blog_date.to_zoned(tz)?;
         let offset = TimeZone::system().to_offset(date.timestamp());
-        let date = self.metadata.date.to_zoned(TimeZone::fixed(offset))?;
+        let date = blog_date.to_zoned(TimeZone::fixed(offset))?;
+        Ok(Some(date))
+    }
+
+    pub fn atom(&self) -> eyre::Result<Markup> {
+        let url = format!("https://odilf.com/blog/{}", self.slug);
 
         Ok(html! {
             entry {
                 title { (self.metadata.title) }
                 link href=(url) {}
                 id { (url) }
-                updated { (date) }
+                @if let Some(date) = self.zoned_date()? { updated { (date) } }
                 summary { (self.summary) }
                 content type="html" {
                     (PreEscaped("<![CDATA["))

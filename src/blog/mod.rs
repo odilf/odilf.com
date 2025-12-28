@@ -124,8 +124,10 @@ impl BlogEntry {
                     ."text-primary pr-[1ch]" { ">" }
                     ."flex-1 font-bold text-lg" { (self.metadata.title) }
 
-                    ."font-light text-primary" {
-                        (self.metadata.date.strftime("%d %b, %Y"))
+                    @if let Some(date) = self.metadata.date {
+                        ."font-light text-primary" {
+                            (date.strftime("%d %b, %Y"))
+                        }
                     }
                 }
 
@@ -166,8 +168,10 @@ impl Render for BlogEntry {
             (components::back())
             h1 { (self.metadata.title) }
             ."flex gap-2 mb-6" {
-                ."font-light text-primary" {
-                    (self.metadata.date.strftime("%d %b, %Y"))
+                @if let Some(date) = self.metadata.date {
+                    ."font-light text-primary" {
+                        (date.strftime("%d %b, %Y"))
+                    }
                 }
                 ."flex-1" {}
                 @for tag_text in self.tags() {
@@ -193,7 +197,7 @@ impl Render for BlogEntry {
 #[serde(rename_all = "kebab-case")]
 pub struct BlogMetadata {
     pub title: String,
-    pub date: jiff::civil::Date,
+    pub date: Option<jiff::civil::Date>,
     pub draft: Option<bool>,
     #[serde(default)]
     pub topics: Vec<String>,
