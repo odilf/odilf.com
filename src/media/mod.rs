@@ -145,9 +145,7 @@ impl MediaLog {
                         }
 
                         ."flex justify-between" {
-                            ."text-primary text-2xl drop-shadow-primary drop-shadow-[0_0_0_0.7rem]" {
-                                (self.rating)
-                            }
+                            (self.rating)
 
                             ."text-tertiary faint" {
                                 "(" (self.typ) ")"
@@ -210,8 +208,13 @@ impl fmt::Display for Date {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Rating(f32);
+
+impl Rating {
+    pub const MIN: Self = Rating(0.0);
+    pub const MAX: Self = Rating(5.0);
+}
 
 impl fmt::Display for Rating {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -224,5 +227,18 @@ impl fmt::Display for Rating {
         }
 
         Ok(())
+    }
+}
+
+impl maud::Render for Rating {
+    fn render(&self) -> Markup {
+        html! {
+            ."text-primary-intense text-2xl"
+            ."glow"[self.0 > 4.0]
+            ."glow-intense"[self.0 > 4.5]
+            {
+                (self.to_string())
+            }
+        }
     }
 }
