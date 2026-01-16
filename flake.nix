@@ -36,6 +36,8 @@
               pkgs.rust-bin.beta.latest.default
               pkgs.rust-analyzer
               pkgs.just
+              pkgs.openssl
+              pkgs.pkg-config
 
               pkgs.watchexec
               pkgs.live-server
