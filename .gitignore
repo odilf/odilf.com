@@ -2,3 +2,4 @@
 .direnv
 bacon.toml
 .env
+.immich_cache

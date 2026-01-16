@@ -5,7 +5,7 @@ use odilf_site::{
     blog::{self, BlogEntry},
     home,
     media::{self, MediaLog},
-    projects, shell,
+    pics, projects, shell,
 };
 use std::{
     cmp::Reverse,
@@ -38,6 +38,7 @@ fn main() -> eyre::Result<()> {
     generate_blog(&output)?;
     generate_projects(&output)?;
     generate_media_log(&output)?;
+    generate_pics(&output)?;
     generate_tailwind("static/app.css", &output)?;
     copy_favicon(&output)?;
 
@@ -156,7 +157,7 @@ fn generate_projects(output: &Path) -> eyre::Result<()> {
 fn generate_media_log(output: &Path) -> eyre::Result<()> {
     let media_path = PathBuf::from(
         std::env::var("ODILF_MEDIA_LOG_PATH")
-            .wrap_err("Couldn't get `ODILF_MEDIA_LOG` env variable.")?,
+            .wrap_err("Couldn't get `ODILF_MEDIA_LOG_PATH` env variable.")?,
     );
 
     let media_output = output.join("media-log");
@@ -217,6 +218,26 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
         media::home(media_entries.iter()),
         output,
     )?;
+
+    Ok(())
+}
+
+fn generate_pics(output: &Path) -> eyre::Result<()> {
+    let immich_url = std::env::var("IMMICH_URL")
+        .wrap_err("Couldn't get `IMMICH_URL` env variable. Set it to your Immich server URL (e.g., https://immich.example.com).")?;
+
+    let album_id = std::env::var("IMMICH_ALBUM_ID")
+        .wrap_err("Couldn't get `IMMICH_ALBUM_ID` env variable. Set it to your album ID.")?;
+
+    let api_key = std::env::var("IMMICH_API_KEY")
+        .wrap_err("Couldn't get `IMMICH_API_KEY` env variable. Set it to your Immich API key.")?;
+
+    tracing::info!("Fetching photos from Immich album");
+    let photos =
+        pics::immich::fetch::fetch_immich_album(&immich_url, &album_id, &api_key, &output)?;
+
+    tracing::info!("Generating pics page with {} photos", photos.len());
+    save_page("pics/index.html", pics::home(&photos), output)?;
 
     Ok(())
 }
