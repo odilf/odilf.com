@@ -191,7 +191,7 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
                 .wrap_err("Couldn't get file name")?;
 
             let entry = MediaLog::from_slug_and_content(slug, &post_content)?;
-            tracing::info!(?path, "Generating blog page");
+            tracing::info!(?path, "Generating media log page");
 
             // TODO: This shouldn't need to allocate
             save_page(
@@ -237,7 +237,7 @@ fn generate_pics(output: &Path) -> eyre::Result<()> {
         pics::immich::fetch::fetch_immich_album(&immich_url, &album_id, &api_key, &output)?;
 
     tracing::info!("Generating pics page with {} photos", photos.len());
-    save_page("pics/index.html", pics::home(&photos), output)?;
+    save_page("pics/index.html", pics::home(photos.iter()), output)?;
 
     Ok(())
 }

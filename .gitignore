@@ -1,5 +1,6 @@
 /target
 .direnv
+.envrc
 bacon.toml
 .env
 .immich_cache

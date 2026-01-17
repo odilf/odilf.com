@@ -63,7 +63,7 @@ pub fn about() -> Markup {
                 "hi, I'm Odysseas, I like making computers do stuff tastefully, usually using Rust."
             }
             p {
-                "I have a master's from the Carlos III University of Madrid, a bachelor for TU Delft in the Netherlands, and the highschool IB and Spanish Bachillerato"
+                "I have a master's from the Carlos III University of Madrid, a bachelor from TU Delft in the Netherlands, and the highschool IB and Spanish Bachillerato"
             }
             p {
                 "I also like to make and play music; mainly with the bass, the keyboard and the computer"

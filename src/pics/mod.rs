@@ -5,19 +5,17 @@ use maud::html;
 
 use immich::Photo;
 
-pub const DESC: &str = "pictures from my immich album";
+pub const DESC: &str = "pictures I've taken";
 
-pub fn home(photos: &[Photo]) -> Markup {
+pub fn home<'a>(photos: impl Iterator<Item = &'a Photo>) -> Markup {
     html! {
         h1 { "pictures" }
 
-        div id="gallery" {
+        div #gallery {
             @for photo in photos {
-                div."photo-item" {
+                ."photo-item" {
                     img src=(photo.image_path) alt=(photo.caption) loading="lazy" {}
-                    @if !photo.caption.is_empty() {
-                        p."caption" { (photo.caption) }
-                    }
+                    p."caption" { (photo.caption) }
                 }
             }
         }

@@ -45,6 +45,7 @@
               pkgs.tailwindcss_4
               pkgs.static-web-server
               pkgs.wrangler
+              pkgs.imagemagick
 
               (pkgs.writeShellScriptBin "deploy" ''
                 cargo run --release && wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main

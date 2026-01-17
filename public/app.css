@@ -224,4 +224,21 @@ body {
         filter: drop-shadow(0 0 10px var(--color-glow))
             drop-shadow(0 0 4px var(--color-glow-2));
     }
+
+    .photo-item {
+        /* max-height: 100dvh; */
+        aspect-ratio: auto;
+        margin-top: 1em;
+        margin-bottom: 7em;
+
+        img {
+            max-height: 90dvh;
+            margin-inline: auto;
+        }
+
+        .caption {
+            text-align: center;
+            opacity: 50%;
+        }
+    }
 }
