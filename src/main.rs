@@ -233,8 +233,16 @@ fn generate_pics(output: &Path) -> eyre::Result<()> {
         .wrap_err("Couldn't get `IMMICH_API_KEY` env variable. Set it to your Immich API key.")?;
 
     tracing::info!("Fetching photos from Immich album");
-    let photos =
+    let mut photos =
         pics::immich::fetch::fetch_immich_album(&immich_url, &album_id, &api_key, &output)?;
+
+    if let Some(pos) = photos
+        .iter()
+        .position(|pic| &pic.caption == "and in every timeline, you're still there")
+    {
+        let item = photos.remove(pos);
+        photos.push(item);
+    }
 
     tracing::info!("Generating pics page with {} photos", photos.len());
     save_page("pics/index.html", pics::home(photos.iter()), output)?;
