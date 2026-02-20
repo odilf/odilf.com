@@ -186,12 +186,35 @@ impl fmt::Display for MediaType {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 #[serde(untagged)]
 pub enum Date {
     Single(JiffDate),
     Range(JiffDate, JiffDate),
+}
+
+impl Date {
+    pub fn representative(&self) -> JiffDate {
+        match self {
+            Self::Single(date) => *date,
+            Self::Range(start, end) => start
+                .checked_add(end.duration_since(*start) / 2)
+                .expect("Avearge between two valid dates."),
+        }
+    }
+}
+
+impl PartialOrd for Date {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.representative().partial_cmp(&other.representative())
+    }
+}
+
+impl Ord for Date {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.representative().cmp(&other.representative())
+    }
 }
 
 impl fmt::Display for Date {
