@@ -17,8 +17,8 @@ pub fn home<'a>(photos: impl Iterator<Item = &'a Photo>) -> Markup {
         div #gallery {
             @for photo in photos {
                 ."photo-item" {
-                    img src=(photo.image_path) alt=(photo.caption) loading="lazy" {}
-                    p."caption" { (photo.caption) }
+                    img src=(photo.image_path) alt=(photo.caption) id=(photo.caption) loading="lazy" {}
+                    a."caption" href=(format!("#{}", photo.caption)) { (photo.caption) }
                 }
             }
         }

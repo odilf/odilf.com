@@ -119,7 +119,10 @@ fn download_and_convert_image(
     // Download the image
     tracing::info!("Downloading image: {} -> {}", asset_id, output_filename);
 
-    let download_url = format!("{}/api/assets/{}/original", immich_url, asset_id);
+    let download_url = format!(
+        "{}/api/assets/{}/original?edited=true",
+        immich_url, asset_id
+    );
 
     let client = reqwest::blocking::Client::new();
     let response = client

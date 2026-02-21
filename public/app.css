@@ -226,19 +226,23 @@ body {
     }
 
     .photo-item {
-        /* max-height: 100dvh; */
+        height: 80lvh;
         aspect-ratio: auto;
         margin-top: 1em;
         margin-bottom: 7em;
-
+        
         img {
-            max-height: 90dvh;
+            max-height: 80lvh;
             margin-inline: auto;
+            scroll-margin-top: 10dvh;
         }
 
         .caption {
             text-align: center;
+            width: 100%;
+            display: inline-block;
             opacity: 50%;
+            color: var(--color-primary);
         }
     }
 }
