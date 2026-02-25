@@ -12,7 +12,7 @@ mod markdown;
 
 pub const DESC: &str = "logging and reviews of books, movies and videogames.";
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct MediaLog<ImageUrl = String> {
     pub title: String,
@@ -22,7 +22,6 @@ pub struct MediaLog<ImageUrl = String> {
     #[serde(rename = "type")]
     pub typ: MediaType,
     pub rating: Rating,
-    // #[serde(flatten)]
     pub date: Date,
     pub urls: Vec<Url>,
     pub review: Option<String>,
@@ -34,7 +33,15 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a MediaLog>) -> Markup {
         (back())
 
         h1 { "media log" }
-        p."pb-4 faint" { (DESC) }
+        p."pb-2 faint" {
+            (DESC)
+            span."opacity-50" {
+                " (also available as "
+                a href="/static/media-log.json" { "JSON" }
+                ")"
+            }
+        }
+
 
         ."flex mb-4 gap-2" {
             button #all-tab disabled="true" { "all" }
@@ -200,7 +207,7 @@ impl Date {
             Self::Single(date) => *date,
             Self::Range(start, end) => start
                 .checked_add(end.duration_since(*start) / 2)
-                .expect("Avearge between two valid dates."),
+                .expect("Average between two valid dates."),
         }
     }
 }

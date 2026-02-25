@@ -2,7 +2,7 @@
 watch: serve watch-build
 
 watch-build:
-    watchexec --watch $ODILF_BLOG_PATH --watch . cargo run
+    watchexec --watch $ODILF_BLOG_PATH --watch $ODILF_MEDIA_LOG_PATH --watch . cargo run
 
 serve:
     env --chdir=target/debug/site -S live-server --port 5173 --index

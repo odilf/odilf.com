@@ -6,7 +6,7 @@ use maud::html;
 use crate::components::back;
 use immich::Photo;
 
-pub const DESC: &str = "pictures I've taken";
+pub const DESC: &str = "pictures I've taken.";
 
 pub fn home<'a>(photos: impl Iterator<Item = &'a Photo>) -> Markup {
     html! {

@@ -17,7 +17,7 @@ use std::{
 fn main() -> eyre::Result<()> {
     dotenvy::dotenv()?;
     tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
+        .with_max_level(tracing::Level::INFO)
         .init();
     let output = {
         #[cfg(debug_assertions)]
@@ -219,6 +219,10 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
         output,
     )?;
 
+    fs::write(
+        output.join("static/media-log.json"),
+        serde_json::to_string_pretty(&media_entries).wrap_err("Can't serialize media-log JSON")?,
+    )?;
     Ok(())
 }
 
