@@ -121,8 +121,8 @@ impl BlogEntry {
         html! {
             a href=(format!("/blog/{}", self.slug)).(topic_classes) {
                 ."flex" {
-                    ."text-primary pr-[1ch]" { ">" }
-                    ."flex-1 font-bold text-lg" { (self.metadata.title) }
+                    ."text-primary pr-[1ch] text-lg" { ">" }
+                    ."flex-1 font-bold text-lg text-balance" { (self.metadata.title) }
 
                     @if let Some(date) = self.metadata.date {
                         ."font-light text-primary" {
@@ -131,10 +131,8 @@ impl BlogEntry {
                     }
                 }
 
-                ."flex gap-2 text-primary" {
-                    ."flex-1 text-sm no-no-underline opacity-50 line-clamp-2 text-ellipsis"
-                        style="text-decoration: none"
-                    {
+                ."flex gap-2 text-primary no-no-underline" {
+                    ."flex-1 text-sm opacity-50 line-clamp-2 text-ellipsis" {
                         (self.summary)
                     }
 

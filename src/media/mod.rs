@@ -150,7 +150,7 @@ impl MediaLog {
                     ."flex-1" {
                         ."flex text-2xl -translate-x-[2ch] gap-[1ch] w-[calc(100%+2ch)]" {
                             ."text-primary" { ">" }
-                            ."flex-1 font-black text-balance" { (self.title) }
+                            ."flex-1 font-black" { (self.title) }
 
                         }
 
