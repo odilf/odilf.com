@@ -38,7 +38,11 @@ pub fn home() -> Markup {
     ];
 
     html! {
-        h1 { "hi, i'm Ody 👋" }
+        ."flex" {
+            h1."flex-1" { "hi, i'm Ody 👋" }
+
+            (components::theme_toggle())
+        }
         p."mb-4 faint" { "go ahead and take a look at what's here ^^" }
 
         ol."flex flex-col gap-2" {
@@ -50,10 +54,6 @@ pub fn home() -> Markup {
                     }
                 }
             }
-        }
-
-        div."mt-8 pt-8 border-t border-primary/20 flex justify-end" {
-            (components::theme_toggle())
         }
     }
 }

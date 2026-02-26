@@ -19,16 +19,18 @@ pub fn tag(topic: impl AsRef<str>) -> Markup {
 
 pub fn theme_toggle() -> Markup {
     html! {
-        div id="theme-toggle" ."flex gap-1 transition-all duration-200" {
-            ."text-bold" { "Theme:" }
-            button."px-2 py-1 text-xs rounded-xs"
-                data-theme="dark" title="Dark mode" { "Dark" }
+        ."flex flex-col opacity-80" {
+            ."text-bold text-center" { "Theme" }
+            #theme-toggle."flex gap-1 transition-all duration-200" {
+                button."w-[8ch] px-0 text-center py-1 text-xs rounded-xs outline-1 outline-white" data-theme="dark" title="Dark mode"
+                { "Dark" }
 
-            button."px-2 py-1 text-xs rounded-xs"
-                data-theme="system" title="System mode" { "System" }
+                button."w-[8ch] px-0 text-center py-1 text-xs rounded-xs outline-1 outline-white" data-theme="system" title="System mode"
+                { "System" }
 
-            button."px-2 py-1 text-xs rounded-xs"
-                data-theme="light" title="Light mode" { "Light" }
+                button."w-[8ch] px-0 text-center py-1 text-xs rounded-xs outline-1 outline-white" data-theme="light" title="Light mode"
+                { "Light" }
+            }
         }
 
         script {
@@ -39,47 +41,30 @@ pub fn theme_toggle() -> Markup {
                 const DARK = 'dark';
                 const SYSTEM = 'system';
 
-                function getSystemTheme() {
-                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT;
-                }
-
-                function getStoredTheme() {
-                    return localStorage.getItem(STORAGE_KEY) ?? SYSTEM;
-                }
-
-                function setStoredTheme(theme) {
-                    localStorage.setItem(STORAGE_KEY, theme);
-                }
+                const getSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT;
+                const getStoredTheme = () => localStorage.getItem(STORAGE_KEY) ?? DARK;
 
                 function applyTheme(theme) {
                     const html = document.documentElement;
                     const effectiveTheme = theme === SYSTEM ? getSystemTheme() : theme;
-                    
-                    // Set data attribute for CSS to use
+
                     html.setAttribute('data-theme', effectiveTheme);
 
-                    // Update button states
                     document.querySelectorAll('#theme-toggle button').forEach(btn => {
-                        if (btn.dataset.theme === theme) {
-                            btn.disabled = true;
-                        } else {
-                            btn.disabled = false;
-                        }
+                        btn.disabled = btn.dataset.theme === theme;
                     });
                 }
 
                 applyTheme(getStoredTheme());
 
-                // Setup event listeners
                 document.querySelectorAll('#theme-toggle button').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const theme = this.dataset.theme;
-                        setStoredTheme(theme);
+                        localStorage.setItem(STORAGE_KEY, theme);
                         applyTheme(theme);
                     });
                 });
 
-                // Listen for system theme changes
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
                     const stored = getStoredTheme();
                     if (stored === SYSTEM) {

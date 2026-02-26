@@ -217,13 +217,12 @@ body {
 
     .glow-intense {
         --color-glow-2: var(--color-primary-intense);
+        @media (prefers-color-scheme: light) {
+            --color-glow-2: white;
+        }
 
         filter: drop-shadow(0 0 10px var(--color-glow))
             drop-shadow(0 0 4px var(--color-glow-2));
-    }
-
-    html[data-theme="light"] .glow-intense {
-        --color-glow-2: white;
     }
 
     .photo-item {
