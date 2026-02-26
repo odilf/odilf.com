@@ -1,31 +1,57 @@
-let buttons = {
+const typeButtons = {
   book: document.getElementById("books-tab"),
   movie: document.getElementById("movies-tab"),
   videogame: document.getElementById("videogames-tab"),
   music: document.getElementById("music-tab"),
   all: document.getElementById("all-tab"),
 };
+let activeTypeTab = typeButtons.all;
+let selectedType = "all";
 
-let active_tab = buttons.all;
+const starButtons = document.querySelectorAll(".star-btn");
+let selectedStarRating = 0;
 
-for (const name in buttons) {
-  buttons[name].addEventListener("click", () => {
-    active_tab.disabled = false;
-    active_tab = buttons[name];
-    active_tab.disabled = true;
+function applyFilters() {
+  document.querySelectorAll(".media-log-entry").forEach((item) => {
+    const typeFilter = () =>
+      selectedType === "all" || item.dataset.mediaType === selectedType;
+    const starFilter = () =>
+      parseFloat(item.dataset.rating) >= selectedStarRating;
 
-    if (name === "all") {
-      document.querySelectorAll(".media-log-entry").forEach((item) => {
-        item.style = "";
-      });
+    const show = typeFilter() && starFilter();
+
+    item.style.display = show ? "" : "none";
+  });
+}
+
+for (const name in typeButtons) {
+  typeButtons[name].addEventListener("click", () => {
+    activeTypeTab.disabled = false;
+    activeTypeTab = typeButtons[name];
+    activeTypeTab.disabled = true;
+    selectedType = name;
+    applyFilters();
+  });
+}
+
+for (const star of starButtons) {
+  const rating = parseInt(star.dataset.rating);
+  star.addEventListener("click", () => {
+    if (selectedStarRating === rating) {
+      selectedStarRating = 0;
     } else {
-      document.querySelectorAll(".media-log-entry").forEach((item) => {
-        item.style = "display: none;";
-      });
-
-      document.querySelectorAll(`.topic-${name}`).forEach((item) => {
-        item.style = "";
-      });
+      selectedStarRating = rating;
     }
+
+    // Update styles
+    for (let i = 0; i < selectedStarRating; i += 1) {
+      starButtons[i].dataset.active = true;
+    }
+    for (let i = selectedStarRating; i < starButtons.length; i += 1) {
+      delete starButtons[i].dataset.active;
+      starButtons[i].removeAttribute("data-active");
+    }
+
+    applyFilters();
   });
 }

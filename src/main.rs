@@ -94,12 +94,13 @@ fn generate_blog(output: &Path) -> eyre::Result<()> {
                 .wrap_err("Couldn't get file name")?;
 
             let Some(entry) =
-                BlogEntry::from_slug_and_content(slug, &post_content, &mut referenced_urls)?
+                BlogEntry::from_slug_and_content(slug, &post_content, &mut referenced_urls)
+                    .wrap_err("Couldn't form blog post")?
             else {
                 return Ok(None);
             };
 
-            tracing::info!(?path, "Generating blog page");
+            tracing::info!(?slug, "Generating blog page");
 
             // TODO: This shouldn't need to allocate
             save_page(
@@ -176,11 +177,9 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
             }
 
             if path.extension().and_then(|ext| ext.to_str()) != Some("md") {
-                tracing::info!("Skipping non `.md` file");
+                tracing::debug!(entry=?entry.path().file_name(), "Skipping non `.md` file");
                 return Ok(None);
             }
-
-            tracing::debug!(?path, "Reading media log");
 
             let post_content = fs::read_to_string(&path).wrap_err("Couldn't read media log")?;
 
@@ -190,8 +189,9 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
                 .and_then(|name| name.to_str())
                 .wrap_err("Couldn't get file name")?;
 
-            let entry = MediaLog::from_slug_and_content(slug, &post_content)?;
-            tracing::info!(?path, "Generating media log page");
+            tracing::info!(?slug, "Generating media log page");
+            let entry = MediaLog::from_slug_and_content(slug, &post_content)
+                .wrap_err_with(|| format!("Couldn't form media log of {slug}"))?;
 
             // TODO: This shouldn't need to allocate
             save_page(

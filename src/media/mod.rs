@@ -49,6 +49,13 @@ pub fn home<'a>(entries: impl Iterator<Item = &'a MediaLog>) -> Markup {
             button #movies-tab { "movies" }
             button #music-tab { "music" }
             button #videogames-tab { "videogames" }
+
+            ."flex-1" {}
+
+            @for i in 1..=5 {
+                button."star-btn text-2xl bg-neutral text-primary hover:text-secondary data-[active]:text-primary-intense transition px-0"
+                    data-rating=(i) { "★" }
+            }
         }
 
         ul {
@@ -135,28 +142,28 @@ impl MediaLog {
     }
 
     pub fn render_summary(&self) -> Markup {
-        let class = format!("media-log-entry topic-{}", self.typ);
-
         html! {
-            a href=(format!("/media-log/{}", self.slug)).(class) {
+            a."media-log-entry" href=(format!("/media-log/{}", self.slug))
+                data-media-type=(self.typ)
+                data-rating=(self.rating.0) {
                 ."flex gap-2" {
-
                     ."flex-1" {
-                        ."flex gap-2" {
-                            ."text-primary pr-[1ch] text-xl" { ">" }
-                            ."flex-1 font-bold text-lg text-xl" { (self.title) }
+                        ."flex text-2xl -translate-x-[2ch] gap-[1ch] w-[calc(100%+2ch)]" {
+                            ."text-primary" { ">" }
+                            ."flex-1 font-black text-balance" { (self.title) }
 
+                        }
+
+                        ."flex" {
                             ."font-light text-primary" {
                                 (self.date)
                             }
-                        }
-
-                        ."flex justify-between" {
-                            (self.rating)
-
-                            ."text-tertiary faint" {
+                            ."text-tertiary faint pl-[1ch]" {
                                 "(" (self.typ) ")"
                             }
+
+                            ."flex-1" {}
+                            (self.rating)
                         }
 
                         ."no-no-underline text-primary faint" {
@@ -228,12 +235,21 @@ impl fmt::Display for Date {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Single(date) => write!(f, "{}", date.strftime("%d %b, %Y")),
-            Self::Range(start, end) => write!(
-                f,
-                "{} - {}",
-                start.strftime("%d %b, %Y"),
-                end.strftime("%d %b, %Y")
-            ),
+            Self::Range(start, end) => {
+                let same_year = start.year() == end.year();
+                let same_month = same_year && start.month() == end.month();
+
+                write!(
+                    f,
+                    "{}",
+                    start.strftime(if same_month { "%d" } else { "%d %b" })
+                )?;
+                if !same_year {
+                    write!(f, "{}", start.strftime(", %Y"))?;
+                }
+                write!(f, " - {}", end.strftime("%d %b"))?;
+                write!(f, ", {}", end.year())
+            }
         }
     }
 }
@@ -263,7 +279,7 @@ impl fmt::Display for Rating {
 impl maud::Render for Rating {
     fn render(&self) -> Markup {
         html! {
-            ."text-primary-intense text-2xl"
+            ."text-primary-intense text-2xl w-[10ch]"
             ."glow"[self.0 > 4.0]
             ."glow-intense"[self.0 > 4.5]
             {
