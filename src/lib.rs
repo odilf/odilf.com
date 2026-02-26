@@ -51,6 +51,10 @@ pub fn home() -> Markup {
                 }
             }
         }
+
+        div."mt-8 pt-8 border-t border-primary/20 flex justify-end" {
+            (components::theme_toggle())
+        }
     }
 }
 

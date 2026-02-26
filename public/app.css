@@ -21,15 +21,15 @@
     --theme-color-primary-soft: oklch(0.84 0.0111 96);
     --theme-color-secondary: oklch(92.5% 0.0937 322.41);
     --theme-color-tertiary: oklch(88.38% 0.0493 250.94);
+}
 
-    @media (prefers-color-scheme: light) {
-        --theme-color-neutral: oklch(0.9 0.005 236);
-        --theme-color-primary: oklch(0.0559 0.0937 57.18);
-        --theme-color-primary-intense: oklch(0.6 0.301 90);
-        --theme-color-primary-soft: oklch(0.31 0.0011 96);
-        --theme-color-secondary: oklch(0.5382 0.1283 322.41);
-        --theme-color-tertiary: oklch(0.9 0.905 236);
-    }
+html[data-theme="light"] {
+    --theme-color-neutral: oklch(0.9 0.005 236);
+    --theme-color-primary: oklch(0.0559 0.0937 57.18);
+    --theme-color-primary-intense: oklch(0.6 0.301 90);
+    --theme-color-primary-soft: oklch(0.31 0.0011 96);
+    --theme-color-secondary: oklch(0.5382 0.1283 322.41);
+    --theme-color-tertiary: oklch(0.9 0.905 236);
 }
 
 @theme inline {
@@ -217,12 +217,13 @@ body {
 
     .glow-intense {
         --color-glow-2: var(--color-primary-intense);
-        @media (prefers-color-scheme: light) {
-            --color-glow-2: white;
-        }
 
         filter: drop-shadow(0 0 10px var(--color-glow))
             drop-shadow(0 0 4px var(--color-glow-2));
+    }
+
+    html[data-theme="light"] .glow-intense {
+        --color-glow-2: white;
     }
 
     .photo-item {
@@ -230,7 +231,7 @@ body {
         aspect-ratio: auto;
         margin-top: 1em;
         margin-bottom: 7em;
-        
+
         img {
             max-height: 80lvh;
             margin-inline: auto;
