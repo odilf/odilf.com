@@ -219,6 +219,7 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
         output,
     )?;
 
+    fs::create_dir_all(output.join("static"))?;
     fs::write(
         output.join("static/media-log.json"),
         serde_json::to_string_pretty(&media_entries).wrap_err("Can't serialize media-log JSON")?,
@@ -238,8 +239,9 @@ fn generate_pics(output: &Path) -> eyre::Result<()> {
 
     tracing::info!("Fetching photos from Immich album");
     let mut photos =
-        pics::immich::fetch::fetch_immich_album(&immich_url, &album_id, &api_key, &output)?;
+        pics::immich::fetch::fetch_immich_album(&immich_url, &album_id, &api_key, output)?;
 
+    // Move last pic to last
     if let Some(pos) = photos
         .iter()
         .position(|pic| &pic.caption == "and in every timeline, you're still there")
@@ -248,8 +250,18 @@ fn generate_pics(output: &Path) -> eyre::Result<()> {
         photos.push(item);
     }
 
-    tracing::info!("Generating pics page with {} photos", photos.len());
-    save_page("pics/index.html", pics::home(photos.iter()), output)?;
+    let all_ids = photos.iter().map(|p| p.id.clone()).collect::<Vec<_>>();
+    for (index, photo) in photos.iter().enumerate() {
+        let page = pics::pic(photo, index, &all_ids);
+        save_page(format!("pics/{}/index.html", photo.id), page, output)?;
+    }
+
+    tracing::info!("Generated {} photo pages", photos.len());
+    save_page(
+        "pics/index.html",
+        pics::home(photos.iter(), &all_ids),
+        output,
+    )?;
 
     Ok(())
 }

@@ -221,7 +221,7 @@ impl Date {
 
 impl PartialOrd for Date {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.representative().partial_cmp(&other.representative())
+        Some(self.cmp(other))
     }
 }
 

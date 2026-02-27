@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 /// A photo from an Immich album
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Photo {
+    /// Unique identifier (slug) for the photo
+    pub id: String,
     /// The relative path to the local image file
     pub image_path: String,
     /// The caption/description of the image

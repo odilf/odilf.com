@@ -101,11 +101,24 @@ fn download_and_convert_image(
     output_dir: &Path,
     filename: &str,
 ) -> eyre::Result<String> {
-    // Generate a safe filename for the output
+    // Use percent-encoding to handle special characters in filename
     let filename_stem = Path::new(filename)
         .file_stem()
         .and_then(|s| s.to_str())
-        .unwrap_or("image");
+        .unwrap_or("image")
+        .chars()
+        .map(|c| {
+            if c.is_alphanumeric() || c == '-' || c == '_' || c == '.' {
+                c.to_string()
+            } else {
+                format!("%{:02X}", c as u8)
+            }
+        })
+        .collect::<String>();
+
+    if filename_stem.is_empty() {
+        eyre::bail!("Original filename contains ONLY special characters!! ({filename})");
+    }
 
     let output_filename = format!("{}.webp", filename_stem);
     let output_path = output_dir.join(&output_filename);
@@ -267,7 +280,35 @@ pub fn fetch_immich_album(
             &asset.original_file_name,
         )?;
 
+        let slug_from_caption = caption
+            .split_whitespace()
+            .filter(|w| !w.is_empty())
+            .map(|word| {
+                let word = word.trim_end_matches(|c: char| !c.is_alphanumeric());
+                let mut chars = word.chars();
+                match chars.next() {
+                    None => String::new(),
+                    Some(first) => {
+                        let rest: String = chars.collect();
+                        format!("{}{}", first.to_lowercase(), rest)
+                    }
+                }
+            })
+            .collect::<String>();
+
+        let id = if slug_from_caption.is_empty() {
+            asset
+                .original_file_name
+                .split('.')
+                .next()
+                .unwrap_or(&asset.id)
+                .to_lowercase()
+        } else {
+            slug_from_caption
+        };
+
         photos.push(Photo {
+            id,
             image_path,
             caption,
             filename: asset.original_file_name,
