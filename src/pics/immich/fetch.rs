@@ -1,28 +1,29 @@
-use color_eyre::eyre::{self, Context as _};
+//! Fetching from immich for pics.
+//!
+//! There is a "cache" file that holds all photo metadata. This is fetched if
+//! - the `.immich_cache` file is missing or
+//! - if some pic that is listed in the cache file is missing
+//! - or if it compiled in release mode.
+
+// NOTE: This file is badly coded. There are a thousand invisible invariants
+// not properly upheld. It just does not seem worth to improve.
+
+use color_eyre::eyre::{self, Context as _, ContextCompat as _};
+use image::ImageReader;
 use reqwest::header::USER_AGENT;
 use std::fs;
+use std::io::Write as _;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Stdio};
+
+use crate::pics::immich::AssetResponse;
 
 use super::{AlbumResponse, Photo};
 
-/// Get the images output directory
-fn get_images_dir(output: &Path) -> eyre::Result<PathBuf> {
-    let images_dir = output.join("static/pics");
-    fs::create_dir_all(&images_dir).wrap_err("Failed to create images directory")?;
-    Ok(images_dir)
-}
-
-/// Get the cache directory for Immich metadata
-fn get_cache_dir() -> eyre::Result<PathBuf> {
-    let cache_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(".immich_cache");
-    fs::create_dir_all(&cache_dir).wrap_err("Failed to create Immich cache directory")?;
-    Ok(cache_dir)
-}
-
 /// Get the cache file path for album metadata
 fn get_cache_file(album_id: &str) -> eyre::Result<PathBuf> {
-    let cache_dir = get_cache_dir()?;
+    let cache_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(".immich_cache");
+    fs::create_dir_all(&cache_dir).wrap_err("Failed to create Immich cache directory")?;
     Ok(cache_dir.join(format!("{}.json", album_id)))
 }
 
@@ -31,7 +32,7 @@ fn load_from_cache(album_id: &str) -> eyre::Result<Option<Vec<Photo>>> {
     let cache_file = get_cache_file(album_id)?;
 
     if !cache_file.exists() {
-        tracing::debug!("No cache file found");
+        tracing::info!("No cache file found");
         return Ok(None);
     }
 
@@ -45,166 +46,61 @@ fn load_from_cache(album_id: &str) -> eyre::Result<Option<Vec<Photo>>> {
     Ok(Some(photos))
 }
 
-/// Save gallery metadata to cache
-fn save_to_cache(album_id: &str, photos: &[Photo]) -> eyre::Result<()> {
-    let cache_file = get_cache_file(album_id)?;
-
-    let json =
-        serde_json::to_string_pretty(photos).wrap_err("Failed to serialize photo metadata")?;
-
-    fs::write(&cache_file, json)
-        .wrap_err_with(|| format!("Failed to write cache file at {:?}", cache_file))?;
-
-    tracing::info!("Saved {} photo metadata to cache", photos.len());
-    Ok(())
-}
-
-/// Convert image using ImageMagick with metadata stripping
-/// This is used as a fallback for formats not supported by the image crate (namely, HEIC)
+/// Convert image using ImageMagick with metadata stripping. This is used as a
+/// fallback for formats not supported by the image crate (namely, HEIC).
 fn convert_with_imagemagick(
-    input_path: &Path,
+    image_data: &[u8],
     output_path: &Path,
     asset_id: &str,
 ) -> eyre::Result<()> {
     tracing::info!("Using ImageMagick to convert image: {}", asset_id);
 
-    let output = Command::new("magick")
-        .arg("convert")
+    let mut cmd = Command::new("magick")
         // Explicitly specify HEIC format for input in case it's not detected
-        .arg(format!("heic:{}", input_path.to_string_lossy()))
+        .arg("heic:-")
         // Strip all metadata and profiles
         .arg("-strip")
         .arg("-quality")
         .arg("85")
         .arg(format!("webp:{}", output_path.to_string_lossy()))
-        .output()
-        .wrap_err("Failed to execute ImageMagick convert command")?;
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .wrap_err("Failed to spawn ImageMagick convert command")?;
 
+    let mut stdin = cmd
+        .stdin
+        .take()
+        .wrap_err("Couldn't take imagemgick stdin")?;
+    stdin.write_all(image_data)?;
+    drop(stdin);
+
+    let output = cmd.wait_with_output()?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(eyre::eyre!(
-            "ImageMagick conversion failed for {}: {}",
-            asset_id,
-            stderr
-        ));
+        eyre::bail!("ImageMagick conversion failed for {}: {}", asset_id, stderr);
     }
 
     tracing::info!("ImageMagick successfully converted image: {}", asset_id);
     Ok(())
 }
 
-/// Download, convert and save a single image to WebP format
-fn download_and_convert_image(
-    immich_url: &str,
-    asset_id: &str,
-    api_key: &str,
-    output_dir: &Path,
-    filename: &str,
-) -> eyre::Result<String> {
-    // Use percent-encoding to handle special characters in filename
-    let filename_stem = Path::new(filename)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or("image")
-        .chars()
-        .map(|c| {
-            if c.is_alphanumeric() || c == '-' || c == '_' || c == '.' {
-                c.to_string()
-            } else {
-                format!("%{:02X}", c as u8)
-            }
-        })
-        .collect::<String>();
+/// Create and save thumbnail from the image data
+fn create_thumbnail(photo: &Photo, output_dir: &Path) -> eyre::Result<()> {
+    let img = ImageReader::open(photo.fs_path(output_dir))?.decode()?;
+    let thumb = img.thumbnail(400, 400);
 
-    if filename_stem.is_empty() {
-        eyre::bail!("Original filename contains ONLY special characters!! ({filename})");
-    }
+    thumb
+        .save_with_format(photo.fs_thumb_path(output_dir), image::ImageFormat::WebP)
+        .map_err(|e| eyre::eyre!("Failed to save thumbnail: {}", e))?;
 
-    let output_filename = format!("{}.webp", filename_stem);
-    let output_path = output_dir.join(&output_filename);
-
-    // Skip if already downloaded
-    if output_path.exists() {
-        tracing::debug!("Image already exists: {}", output_filename);
-        return Ok(format!("/static/pics/{}", output_filename));
-    }
-
-    // Download the image
-    tracing::info!("Downloading image: {} -> {}", asset_id, output_filename);
-
-    let download_url = format!(
-        "{}/api/assets/{}/original?edited=true",
-        immich_url, asset_id
+    tracing::debug!(
+        thumb_path=?photo.fs_thumb_path(output_dir),
+        "Created thumbnail"
     );
 
-    let client = reqwest::blocking::Client::new();
-    let response = client
-        .get(&download_url)
-        .header(USER_AGENT, "rust-web-api-client")
-        .header("x-api-key", api_key)
-        .send()
-        .wrap_err_with(|| format!("Failed to download image {}", asset_id))?;
-
-    let status = response.status();
-    if !status.is_success() {
-        return Err(eyre::eyre!(
-            "Failed to download image {}: {} {}",
-            asset_id,
-            status.as_u16(),
-            status.canonical_reason().unwrap_or("unknown error")
-        ));
-    }
-
-    let image_data = response
-        .bytes()
-        .wrap_err_with(|| format!("Failed to read image bytes for {}", asset_id))?;
-
-    tracing::info!("Converting image to WebP: {}", output_filename);
-
-    // Try the Rust image crate first (fast path for common formats)
-    let conversion_result = (|| -> eyre::Result<()> {
-        let img = image::load_from_memory(&image_data)
-            .map_err(|e| eyre::eyre!("Rust image crate failed to decode: {}", e))?;
-
-        // Strip all metadata by converting to RGB/RGBA and creating a new image
-        // This ensures no EXIF data, color profiles, or other metadata is preserved
-        let stripped_img = match img {
-            image::DynamicImage::ImageRgba8(rgba) => image::DynamicImage::ImageRgba8(rgba),
-            image::DynamicImage::ImageRgb8(rgb) => image::DynamicImage::ImageRgb8(rgb),
-            other => other.to_rgb8().into(),
-        };
-
-        stripped_img
-            .save_with_format(&output_path, image::ImageFormat::WebP)
-            .map_err(|e| eyre::eyre!("Failed to save WebP: {}", e))?;
-
-        Ok(())
-    })();
-
-    // ImageMagick fallback
-    if let Err(error) = conversion_result {
-        tracing::warn!(
-            "Rust image crate failed for {}, falling back to ImageMagick: {}",
-            asset_id,
-            error
-        );
-
-        let temp_file = output_dir.join(format!(".tmp_{}", asset_id));
-        fs::write(&temp_file, &image_data)
-            .wrap_err_with(|| format!("Failed to write temporary file for {}", asset_id))?;
-
-        convert_with_imagemagick(&temp_file, &output_path, asset_id)?;
-        fs::remove_file(&temp_file).ok();
-
-        tracing::info!(
-            "ImageMagick successfully converted and saved image: {}",
-            asset_id
-        );
-    }
-
-    tracing::info!("Saved WebP to: {}", output_path.to_string_lossy());
-
-    Ok(format!("/static/pics/{}", output_filename))
+    Ok(())
 }
 
 /// Fetch photos from an Immich album, downloading and converting images
@@ -216,13 +112,16 @@ pub fn fetch_immich_album(
 ) -> eyre::Result<Vec<Photo>> {
     tracing::info!("Fetching Immich album: {}", album_id);
 
-    let images_dir = get_images_dir(output_dir)?;
+    let images_dir = output_dir.join("static/pics");
+    fs::create_dir_all(&images_dir).wrap_err("Failed to create images directory")?;
 
-    if let Some(cached_photos) = load_from_cache(album_id)? {
+    if let Some(cached_photos) = load_from_cache(album_id)?
+        && !cfg!(debug_assertions)
+    {
         tracing::info!("Found cached photo metadata, verifying image files...");
 
         let all_files_exist = cached_photos.iter().all(|photo| {
-            let full_path = output_dir.join(&photo.image_path);
+            let full_path = images_dir.join(&photo.id);
             full_path.exists()
         });
 
@@ -239,7 +138,7 @@ pub fn fetch_immich_album(
 
     tracing::info!("Cache miss or incomplete, fetching from Immich API");
 
-    let api_url = format!("{}/api/albums/{}", immich_url, album_id);
+    let api_url = format!("{immich_url}/api/albums/{album_id}");
     tracing::debug!("API URL: {}", api_url);
 
     let client = reqwest::blocking::Client::new();
@@ -263,59 +162,101 @@ pub fn fetch_immich_album(
         .json()
         .wrap_err("Failed to parse Immich API response as JSON")?;
 
-    tracing::info!("Fetched {} assets from Immich", album.assets.len());
+    let photos = album
+        .assets
+        .into_iter()
+        .map(|asset| fetch_immich_pic(asset, output_dir, immich_url, api_key))
+        .collect::<eyre::Result<Vec<_>>>()?;
 
-    let mut photos = Vec::new();
-    for asset in album.assets {
-        let caption = asset
-            .exif_info
-            .and_then(|exif| exif.description)
-            .unwrap_or_default();
+    let cache_file = get_cache_file(album_id)?;
+    fs::write(
+        &cache_file,
+        serde_json::to_string_pretty(&photos).wrap_err("Failed to serialize photo metadata")?,
+    )
+    .wrap_err_with(|| format!("Failed to write cache file at {:?}", cache_file))?;
 
-        let image_path = download_and_convert_image(
-            immich_url,
-            &asset.id,
-            api_key,
-            &images_dir,
-            &asset.original_file_name,
-        )?;
-
-        let slug_from_caption = caption
-            .split_whitespace()
-            .filter(|w| !w.is_empty())
-            .map(|word| {
-                let word = word.trim_end_matches(|c: char| !c.is_alphanumeric());
-                let mut chars = word.chars();
-                match chars.next() {
-                    None => String::new(),
-                    Some(first) => {
-                        let rest: String = chars.collect();
-                        format!("{}{}", first.to_lowercase(), rest)
-                    }
-                }
-            })
-            .collect::<String>();
-
-        let id = if slug_from_caption.is_empty() {
-            asset
-                .original_file_name
-                .split('.')
-                .next()
-                .unwrap_or(&asset.id)
-                .to_lowercase()
-        } else {
-            slug_from_caption
-        };
-
-        photos.push(Photo {
-            id,
-            image_path,
-            caption,
-            filename: asset.original_file_name,
-        });
-    }
-
-    save_to_cache(album_id, &photos)?;
+    tracing::info!("Saved {} photo metadata to cache", photos.len());
 
     Ok(photos)
+}
+
+fn fetch_immich_pic(
+    asset: AssetResponse,
+    output_dir: &Path,
+    immich_url: &str,
+    api_key: &str,
+) -> eyre::Result<Photo> {
+    let caption = asset
+        .exif_info
+        .and_then(|exif| exif.description)
+        .unwrap_or_default();
+
+    let photo = Photo {
+        id: asset.id,
+        caption,
+        filename: asset.original_file_name,
+    };
+    let output_path = photo.fs_path(output_dir);
+    fs::create_dir_all(output_path.parent().expect("/static at least"))?;
+
+    if output_path.exists() {
+        tracing::debug!(?photo.id, "Image already exists");
+        return Ok(photo);
+    };
+
+    tracing::debug!(?photo.id, "Downloading image");
+    let download_url = format!("{immich_url}/api/assets/{}/original?edited=true", &photo.id);
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .get(&download_url)
+        .header(USER_AGENT, "rust-web-client")
+        .header("x-api-key", api_key)
+        .send()
+        .wrap_err_with(|| format!("Failed to download image {}", photo.id))?;
+
+    let status = response.status();
+    if !status.is_success() {
+        eyre::bail!(
+            "Failed to download image {}: {} {}",
+            photo.id,
+            status.as_u16(),
+            status.canonical_reason().unwrap_or("unknown error")
+        );
+    }
+
+    let image_data = response
+        .bytes()
+        .wrap_err_with(|| format!("Failed to read image bytes for {}", photo.id))?;
+
+    // Try to convert first with `image` crate.
+    let conversion_result = (|| -> eyre::Result<()> {
+        let img = image::load_from_memory(&image_data)
+            .map_err(|e| eyre::eyre!("Rust image crate failed to decode: {}", e))?;
+
+        let stripped_img = match img {
+            image::DynamicImage::ImageRgba8(rgba) => image::DynamicImage::ImageRgba8(rgba),
+            image::DynamicImage::ImageRgb8(rgb) => image::DynamicImage::ImageRgb8(rgb),
+            other => other.to_rgb8().into(),
+        };
+
+        stripped_img
+            .save_with_format(&output_path, image::ImageFormat::WebP)
+            .map_err(|e| eyre::eyre!("Failed to save WebP: {}", e))?;
+
+        Ok(())
+    })();
+
+    if let Err(error) = conversion_result {
+        tracing::warn!(
+            "Rust image crate failed for {}, falling back to ImageMagick: {error}",
+            photo.id,
+        );
+
+        convert_with_imagemagick(&image_data, &output_path, &photo.id)?;
+    }
+
+    create_thumbnail(&photo, output_dir)?;
+    tracing::info!("Saved WebP to: {}", output_path.to_string_lossy());
+
+    Ok(photo)
 }

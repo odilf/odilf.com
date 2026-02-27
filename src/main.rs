@@ -19,6 +19,7 @@ fn main() -> eyre::Result<()> {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .init();
+
     let output = {
         #[cfg(debug_assertions)]
         const DEFAULT_PATH: &str = "./target/debug/site";
@@ -230,10 +231,8 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
 fn generate_pics(output: &Path) -> eyre::Result<()> {
     let immich_url = std::env::var("IMMICH_URL")
         .wrap_err("Couldn't get `IMMICH_URL` env variable. Set it to your Immich server URL (e.g., https://immich.example.com).")?;
-
     let album_id = std::env::var("IMMICH_ALBUM_ID")
         .wrap_err("Couldn't get `IMMICH_ALBUM_ID` env variable. Set it to your album ID.")?;
-
     let api_key = std::env::var("IMMICH_API_KEY")
         .wrap_err("Couldn't get `IMMICH_API_KEY` env variable. Set it to your Immich API key.")?;
 

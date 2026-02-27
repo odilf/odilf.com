@@ -20,8 +20,8 @@ pub fn home<'a>(photos: impl Iterator<Item = &'a Photo>, all_ids: &[String]) -> 
 
         div #gallery ."grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4" {
             @for photo in photos {
-                a href={(format!("/pics/{}/", photo.id))} ."block aspect-square overflow-hidden" {
-                    img src=(photo.image_path) alt=(photo.caption) loading="lazy" ."w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-50" {}
+                a href=(format!("/pics/{}/", photo.id)) ."block aspect-square overflow-hidden" {
+                    img src=(photo.thumb_path()) alt=(photo.caption) loading="lazy" ."w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-50" {}
                 }
             }
         }
@@ -32,14 +32,6 @@ pub fn home<'a>(photos: impl Iterator<Item = &'a Photo>, all_ids: &[String]) -> 
                     e.preventDefault();
                     const ids = JSON.parse(document.getElementById('photo-ids').textContent);
                     const randomId = ids[Math.floor(Math.random() * ids.length)];
-                    window.location.href = '/pics/' + randomId + '/';
-                });
-                document.getElementById('random').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const ids = JSON.parse(document.getElementById('photo-ids').textContent);
-                    const currentId = document.getElementById('photo-ids').dataset.current;
-                    const filtered = ids.filter(id => id !== currentId);
-                    const randomId = filtered[Math.floor(Math.random() * filtered.length)];
                     window.location.href = '/pics/' + randomId + '/';
                 });
             "#))
@@ -69,7 +61,7 @@ pub fn pic(photo: &Photo, index: usize, all_ids: &[String]) -> Markup {
                 }
             }
 
-            img src=(photo.image_path) alt=(photo.caption) ."max-h-[calc(100dvh-200px)] max-w-full mt-8" {}
+            img src=(photo.path()) alt=(photo.caption) ."max-h-[calc(100dvh-200px)] max-w-full mt-8" {}
 
             ."mt-4 text-center flex gap-6 justify-center items-center" {
                 p."opacity-80 text-primary-intense" { (photo.caption) }

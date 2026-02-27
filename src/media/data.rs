@@ -7,7 +7,7 @@ pub fn get_image<'a>(urls: impl Iterator<Item = &'a Url>, slug: &str) -> eyre::R
     let cache_file_path = PathBuf::from(format!("target/debug/site/{}", slug));
     let image_url = fs::read_to_string(&cache_file_path).or_else(|_| {
         for url in urls {
-            tracing::info!(?url);
+            tracing::debug!(?url);
 
             let image_url = match url.host_str() {
                 Some(host) if host.contains("wikipedia.org") => extract_wikipedia_image(url),

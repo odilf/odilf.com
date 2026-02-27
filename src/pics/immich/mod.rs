@@ -1,5 +1,7 @@
 pub mod fetch;
 
+use std::path::{Path, PathBuf};
+
 use serde::{Deserialize, Serialize};
 
 /// A photo from an Immich album
@@ -7,12 +9,28 @@ use serde::{Deserialize, Serialize};
 pub struct Photo {
     /// Unique identifier (slug) for the photo
     pub id: String,
-    /// The relative path to the local image file
-    pub image_path: String,
     /// The caption/description of the image
     pub caption: String,
     /// The original filename
     pub filename: String,
+}
+
+impl Photo {
+    pub fn path(&self) -> String {
+        format!("/static/pics/{}.webp", self.id)
+    }
+
+    pub fn thumb_path(&self) -> String {
+        format!("/static/pics/{}.webp", self.id)
+    }
+
+    pub fn fs_path(&self, output_dir: impl AsRef<Path>) -> PathBuf {
+        output_dir.as_ref().join(&self.path()[1..])
+    }
+
+    pub fn fs_thumb_path(&self, output_dir: impl AsRef<Path>) -> PathBuf {
+        output_dir.as_ref().join(&self.thumb_path()[1..])
+    }
 }
 
 /// Response from Immich album API
