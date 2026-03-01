@@ -46,63 +46,6 @@ fn load_from_cache(album_id: &str) -> eyre::Result<Option<Vec<Photo>>> {
     Ok(Some(photos))
 }
 
-/// Convert image using ImageMagick with metadata stripping. This is used as a
-/// fallback for formats not supported by the image crate (namely, HEIC).
-fn convert_with_imagemagick(
-    image_data: &[u8],
-    output_path: &Path,
-    asset_id: &str,
-) -> eyre::Result<()> {
-    tracing::info!("Using ImageMagick to convert image: {}", asset_id);
-
-    let mut cmd = Command::new("magick")
-        // Explicitly specify HEIC format for input in case it's not detected
-        .arg("heic:-")
-        // Strip all metadata and profiles
-        .arg("-strip")
-        .arg("-quality")
-        .arg("85")
-        .arg(format!("webp:{}", output_path.to_string_lossy()))
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .wrap_err("Failed to spawn ImageMagick convert command")?;
-
-    let mut stdin = cmd
-        .stdin
-        .take()
-        .wrap_err("Couldn't take imagemgick stdin")?;
-    stdin.write_all(image_data)?;
-    drop(stdin);
-
-    let output = cmd.wait_with_output()?;
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        eyre::bail!("ImageMagick conversion failed for {}: {}", asset_id, stderr);
-    }
-
-    tracing::info!("ImageMagick successfully converted image: {}", asset_id);
-    Ok(())
-}
-
-/// Create and save thumbnail from the image data
-fn create_thumbnail(photo: &Photo, output_dir: &Path) -> eyre::Result<()> {
-    let img = ImageReader::open(photo.fs_path(output_dir))?.decode()?;
-    let thumb = img.thumbnail(400, 400);
-
-    thumb
-        .save_with_format(photo.fs_thumb_path(output_dir), image::ImageFormat::WebP)
-        .map_err(|e| eyre::eyre!("Failed to save thumbnail: {}", e))?;
-
-    tracing::debug!(
-        thumb_path=?photo.fs_thumb_path(output_dir),
-        "Created thumbnail"
-    );
-
-    Ok(())
-}
-
 /// Fetch photos from an Immich album, downloading and converting images
 pub fn fetch_immich_album(
     immich_url: &str,
@@ -165,7 +108,7 @@ pub fn fetch_immich_album(
     let photos = album
         .assets
         .into_iter()
-        .map(|asset| fetch_immich_pic(asset, output_dir, immich_url, api_key))
+        .map(|asset| get_immich_pic(asset, output_dir, immich_url, api_key))
         .collect::<eyre::Result<Vec<_>>>()?;
 
     let cache_file = get_cache_file(album_id)?;
@@ -180,7 +123,8 @@ pub fn fetch_immich_album(
     Ok(photos)
 }
 
-fn fetch_immich_pic(
+/// Gets the immich picture, downloading it and creating a thumbnail if it doesn't exist.
+fn get_immich_pic(
     asset: AssetResponse,
     output_dir: &Path,
     immich_url: &str,
@@ -199,10 +143,23 @@ fn fetch_immich_pic(
     let output_path = photo.fs_path(output_dir);
     fs::create_dir_all(output_path.parent().expect("/static at least"))?;
 
-    if output_path.exists() {
+    fetch_and_convert_pic(&photo, &output_path, immich_url, api_key)?;
+    create_thumbnail(&photo, output_dir)?;
+    tracing::info!("Saved WebP to: {}", output_path.to_string_lossy());
+
+    Ok(photo)
+}
+
+fn fetch_and_convert_pic(
+    photo: &Photo,
+    output_dir: &Path,
+    immich_url: &str,
+    api_key: &str,
+) -> eyre::Result<()> {
+    if photo.fs_path(output_dir).exists() {
         tracing::debug!(?photo.id, "Image already exists");
-        return Ok(photo);
-    };
+        return Ok(());
+    }
 
     tracing::debug!(?photo.id, "Downloading image");
     let download_url = format!("{immich_url}/api/assets/{}/original?edited=true", &photo.id);
@@ -227,36 +184,65 @@ fn fetch_immich_pic(
     let image_data = response
         .bytes()
         .wrap_err_with(|| format!("Failed to read image bytes for {}", photo.id))?;
+    tracing::info!("Using ImageMagick to convert image: {}", photo.caption);
 
-    // Try to convert first with `image` crate.
-    let conversion_result = (|| -> eyre::Result<()> {
-        let img = image::load_from_memory(&image_data)
-            .map_err(|e| eyre::eyre!("Rust image crate failed to decode: {}", e))?;
+    let mut cmd = Command::new("magick")
+        .arg("-")
+        // Strip all metadata and profiles
+        .arg("-auto-orient")
+        .arg("-strip")
+        .arg("-quality")
+        .arg("85")
+        .arg(format!(
+            "webp:{}",
+            output_dir.to_str().expect("Valid unicode")
+        ))
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .wrap_err("Failed to spawn ImageMagick convert command")?;
 
-        let stripped_img = match img {
-            image::DynamicImage::ImageRgba8(rgba) => image::DynamicImage::ImageRgba8(rgba),
-            image::DynamicImage::ImageRgb8(rgb) => image::DynamicImage::ImageRgb8(rgb),
-            other => other.to_rgb8().into(),
-        };
+    let mut stdin = cmd
+        .stdin
+        .take()
+        .wrap_err("Couldn't take imagemgick stdin")?;
+    stdin.write_all(&image_data)?;
+    drop(stdin);
 
-        stripped_img
-            .save_with_format(&output_path, image::ImageFormat::WebP)
-            .map_err(|e| eyre::eyre!("Failed to save WebP: {}", e))?;
-
-        Ok(())
-    })();
-
-    if let Err(error) = conversion_result {
-        tracing::warn!(
-            "Rust image crate failed for {}, falling back to ImageMagick: {error}",
-            photo.id,
-        );
-
-        convert_with_imagemagick(&image_data, &output_path, &photo.id)?;
+    let output = cmd.wait_with_output()?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eyre::bail!("ImageMagick conversion failed for {}: {}", photo.id, stderr);
     }
 
-    create_thumbnail(&photo, output_dir)?;
-    tracing::info!("Saved WebP to: {}", output_path.to_string_lossy());
+    tracing::debug!(
+        "ImageMagick successfully converted image: {}",
+        photo.caption
+    );
 
-    Ok(photo)
+    Ok(())
+}
+
+/// Create a thumbnail of the picture at [`Photo::fs_path`] if it doesn't exist.
+///
+/// Errors if it doesn't exist.
+fn create_thumbnail(photo: &Photo, output_dir: &Path) -> eyre::Result<()> {
+    if photo.fs_thumb_path(output_dir).exists() {
+        return Ok(());
+    }
+
+    let img = ImageReader::open(photo.fs_path(output_dir))?.decode()?;
+    let thumb = img.thumbnail(400, 400);
+
+    thumb
+        .save_with_format(photo.fs_thumb_path(output_dir), image::ImageFormat::WebP)
+        .map_err(|e| eyre::eyre!("Failed to save thumbnail: {}", e))?;
+
+    tracing::debug!(
+        thumb_path=?photo.fs_thumb_path(output_dir),
+        "Created thumbnail"
+    );
+
+    Ok(())
 }

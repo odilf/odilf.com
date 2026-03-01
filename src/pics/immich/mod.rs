@@ -21,7 +21,7 @@ impl Photo {
     }
 
     pub fn thumb_path(&self) -> String {
-        format!("/static/pics/{}.webp", self.id)
+        format!("/static/pics/{}_thumb.webp", self.id)
     }
 
     pub fn fs_path(&self, output_dir: impl AsRef<Path>) -> PathBuf {
