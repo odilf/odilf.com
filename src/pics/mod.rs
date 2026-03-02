@@ -60,7 +60,7 @@ pub fn pic(photo: &Photo, index: usize, all_ids: &[String]) -> Markup {
                     a href={(format!("/pics/{}/", id))}."opacity-70 hover:opacity-100" { "next ->" }
                 }
             }
-
+            
             img src=(photo.path()) alt=(photo.caption) ."max-h-[calc(100dvh-200px)] max-w-full mt-8" {}
 
             ."mt-4 text-center flex gap-6 justify-center items-center" {

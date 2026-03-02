@@ -140,23 +140,22 @@ fn get_immich_pic(
         caption,
         filename: asset.original_file_name,
     };
-    let output_path = photo.fs_path(output_dir);
-    fs::create_dir_all(output_path.parent().expect("/static at least"))?;
+    let photo_path = photo.fs_path(output_dir);
+    fs::create_dir_all(photo_path.parent().expect("/static at least"))?;
 
-    fetch_and_convert_pic(&photo, &output_path, immich_url, api_key)?;
+    fetch_and_convert_pic(&photo, &photo_path, immich_url, api_key)?;
     create_thumbnail(&photo, output_dir)?;
-    tracing::info!("Saved WebP to: {}", output_path.to_string_lossy());
 
     Ok(photo)
 }
 
 fn fetch_and_convert_pic(
     photo: &Photo,
-    output_dir: &Path,
+    photo_path: &Path,
     immich_url: &str,
     api_key: &str,
 ) -> eyre::Result<()> {
-    if photo.fs_path(output_dir).exists() {
+    if photo_path.exists() {
         tracing::debug!(?photo.id, "Image already exists");
         return Ok(());
     }
@@ -195,7 +194,7 @@ fn fetch_and_convert_pic(
         .arg("85")
         .arg(format!(
             "webp:{}",
-            output_dir.to_str().expect("Valid unicode")
+            photo_path.to_str().expect("Valid unicode")
         ))
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
