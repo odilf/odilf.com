@@ -4,7 +4,8 @@ use std::{fs, path::PathBuf};
 use url::Url;
 
 pub fn get_image<'a>(urls: impl Iterator<Item = &'a Url>, slug: &str) -> eyre::Result<String> {
-    let cache_file_path = PathBuf::from(format!("target/debug/site/{}", slug));
+    let cache_file_path =
+        PathBuf::from(format!("target/debug/site/media-log/covers-cache/{}", slug));
     let image_url = fs::read_to_string(&cache_file_path).or_else(|_| {
         for url in urls {
             tracing::debug!(?url);

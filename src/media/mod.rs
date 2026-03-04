@@ -95,7 +95,7 @@ impl Render for MediaLog {
                     }
                 }
 
-                img."w-[30%]" src=(self.image_url) alt=(self.title) {}
+                img."w-[30%] object-contain" src=(self.image_url) alt=(self.title) {}
             }
         }
     }
