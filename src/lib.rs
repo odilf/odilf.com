@@ -23,7 +23,10 @@ pub fn shell(content: Markup) -> Markup {
                 link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" {}
             }
 
-            body { main."font-mono py-4 content" { (content) } }
+            body {
+                main."font-mono py-4 content" { (content) }
+                (components::theme_script())
+            }
         }
     }
 }
@@ -40,7 +43,6 @@ pub fn home() -> Markup {
     html! {
         ."flex" {
             h1."flex-1" { "hi, i'm Ody 👋" }
-
             (components::theme_toggle())
         }
         p."mb-4 faint" { "go ahead and take a look at what's here ^^" }
