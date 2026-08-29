@@ -90,7 +90,7 @@ body {
 
     .prose {
         color: var(--theme-color-primary-soft);
-        font-weight: 350;
+        font-weight: 400;
 
         h2 {
             font-size: var(--text-2xl);

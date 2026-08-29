@@ -1,14 +1,12 @@
 last_fetched = "2025-08-10T17:50:55.535359Z"
 
-[projects.identity-crisis]
-description = "A social question game"
-source_code_url = "https://github.com/odilf/identity-crisis"
-website_url = "http://whoami.odilf.com/"
-creation_date = "2025-07-15T08:14:58Z"
-last_update = "2025-07-21T10:08:05Z"
-language = "TypeScript"
+[projects.gazpacho]
+description = "Good video editing for all"
+source_code_url = "https://github.com/odilf/gazpacho"
+creation_date = "2026-03-31T00:00:00Z"
+last_update = "2026-08-29T00:00:00Z"
+language = "Rust"
 topics = []
-# image_url = "/static/project-images/identity-crisis.png"
 
 [projects.norcina]
 description = "Rubik's cube library and timer"

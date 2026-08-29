@@ -220,6 +220,7 @@ fn generate_media_log(output: &Path) -> eyre::Result<()> {
         output,
     )?;
 
+    dbg!(&output);
     fs::create_dir_all(output.join("static"))?;
     fs::write(
         output.join("static/media-log.json"),
