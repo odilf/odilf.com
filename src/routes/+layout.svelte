@@ -1,13 +1,22 @@
 <script lang="ts">
+	import { theme } from '#lib/theme.svelte.js';
 	import './layout.css';
-	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
+
+	$effect(() => {
+		document.documentElement.dataset.theme = theme.current;
+	});
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.svg" />
+	<link rel="icon" href="/favicon.png" />
+	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/rss.xml" />
+	<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" />
 </svelte:head>
 
-{@render children()}
+<main class="content py-4">
+	{@render children()}
+</main>
