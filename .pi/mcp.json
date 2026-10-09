@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "svelte": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sveltejs/mcp"
+      ],
+      "description": "Svelte 5 and SvelteKit documentation, code autofixing, and playground links"
+    }
+  }
+}

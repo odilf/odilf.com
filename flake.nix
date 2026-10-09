@@ -33,22 +33,11 @@
           formatter = pkgs.nixfmt-rfc-style;
           devShells.default = pkgs.mkShell {
             packages = [
-              pkgs.rust-bin.beta.latest.default
-              pkgs.rust-analyzer
-              pkgs.just
-              pkgs.openssl
-              pkgs.pkg-config
-
-              pkgs.watchexec
-              pkgs.live-server
-
-              pkgs.tailwindcss_4
-              pkgs.static-web-server
-              pkgs.wrangler
-              pkgs.imagemagick
+              pkgs.nodejs_26
+              pkgs.pnpm
 
               (pkgs.writeShellScriptBin "deploy" ''
-                cargo run --release && wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
+                echo TODO: Write script here && exit 1 && ${pkgs.wrangler}/bin/wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
               '')
             ];
           };
