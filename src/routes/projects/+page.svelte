@@ -1,0 +1,29 @@
+<script lang="ts">
+	import Back from '#lib/components/Back.svelte';
+	import ProjectCard from '#lib/components/ProjectCard.svelte';
+	import { formatBlogDate } from '#lib/date.js';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+</script>
+
+<Back />
+
+<h1>programming projects</h1>
+
+<p class="pb-2">most of my personal coding projects.</p>
+<p>
+	Feel free to check out my
+	<a href="https://github.com/odilf" target="_blank" rel="noopener noreferrer">GitHub</a>
+	and my
+	<a href="https://git.odilf.com" target="_blank" rel="noopener noreferrer">personal git forge </a>
+	for a more comprehensive list.
+</p>
+
+<ul class="mt-8 grid grid-cols-1 gap-3">
+	{#each Object.entries(data.projects) as [name, project] (name)}
+		<ProjectCard {name} {project} />
+	{/each}
+</ul>
+
+<p class="faint mt-8 text-xs">Last updated: {formatBlogDate(data.lastFetched)}</p>
