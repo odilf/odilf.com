@@ -1,0 +1,26 @@
+[[language]]
+name = "svelte"
+auto-format = true
+language-servers = [
+	"svelteserver",
+	"vscode-eslint-language-server",
+	"tailwindcss-ls"
+]
+
+[language-server.vscode-eslint-language-server.config]
+validate = "on"
+run = "onType"
+rulesCustomizations = []
+problems = { shortenToSingleLine = false }
+nodePath = ""
+experimental = { useFlatConfig = true }
+
+[language-server.vscode-eslint-language-server.config.codeAction.disableRuleComment]
+enable = true
+location = "separateLine"
+
+[language-server.vscode-eslint-language-server.config.codeAction.showDocumentation]
+enable = true
+
+[language-server.vscode-eslint-language-server.config.workingDirectory]
+mode = "location"

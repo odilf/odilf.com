@@ -35,6 +35,9 @@
             packages = [
               pkgs.nodejs_26
               pkgs.pnpm
+              pkgs.svelte-language-server
+              pkgs.tailwindcss-language-server
+              pkgs.typescript-language-server
 
               (pkgs.writeShellScriptBin "deploy" ''
                 echo TODO: Write script here && exit 1 && ${pkgs.wrangler}/bin/wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
