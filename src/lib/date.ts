@@ -2,6 +2,20 @@ import type { MediaDate } from './types.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+// TODO: This should also just use `Date` API?
+export function toIsoDate(value: unknown): string | null {
+	if (value instanceof Date && !Number.isNaN(value.getTime())) {
+		return value.toISOString().slice(0, 10);
+	}
+
+	if (typeof value === 'string') {
+		const match = /^(\d{4}-\d{2}-\d{2})/.exec(value);
+		if (match) return match[1];
+	}
+
+	return null;
+}
+
 interface Ymd {
 	year: number;
 	month: number;

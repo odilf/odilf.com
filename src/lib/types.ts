@@ -3,7 +3,7 @@ export type Language = 'english' | 'spanish';
 export interface BlogMetadata {
 	title: string;
 	date: string | null;
-	draft: boolean;
+	draft: boolean | null;
 	topics: string[];
 	lang: Language;
 	numberedHeadings: boolean;
