@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Markdown from '#lib/components/Markdown.svelte';
-	import Rating from '#lib/components/Rating.svelte';
+	import Rating from './Rating.svelte';
 	import { formatMediaDate } from '#lib/date.js';
 	import type { MediaLog } from '#lib/types.js';
 

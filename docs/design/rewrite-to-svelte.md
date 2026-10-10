@@ -204,15 +204,15 @@ src/
     types.ts  theme.svelte.ts  date.ts
     markdown/{index,blog,media}.ts
     server/{blog,media-log,projects,pics,feeds}.ts
-    components/{Back,Tag,ThemeToggle,Rating,BlogEntryCard,MediaLogCard,ProjectCard,PhotoThumb}.svelte
+    components/{Back,Markdown,Tag,ThemeToggle}.svelte
     fixtures/
   routes/
     +layout.ts  +layout.svelte  +page.svelte
     about/+page.svelte
-    blog/{+page.server.ts,+page.svelte,[slug]/{+page.server.ts,+page.svelte},rss.xml/+server.ts,atom.xml/+server.ts}
-    media-log/{...,[slug]/...}
-    projects/+page.{server.ts,svelte}
-    pics/{...,[id]/...}
+    blog/{+page.server.ts,+page.svelte,EntryCard.svelte,[slug]/{+page.server.ts,+page.svelte},rss.xml/+server.ts,atom.xml/+server.ts}
+    media-log/{+page.server.ts,+page.svelte,Card.svelte,Rating.svelte,[slug]/...}
+    projects/{+page.server.ts,+page.svelte,Card.svelte}
+    pics/{+page.server.ts,+page.svelte,Thumb.svelte,[id]/...}
 scripts/{fetch-projects,fetch-pics}.ts
 ```
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
-	import MediaLogCard from '#lib/components/MediaLogCard.svelte';
+	import Card from './Card.svelte';
 	import type { MediaType } from '#lib/types.js';
 	import type { PageProps } from './$types';
 
@@ -63,6 +63,6 @@
 
 <ul>
 	{#each visible as entry (entry.slug)}
-		<li class="mb-4"><MediaLogCard {entry} /></li>
+		<li class="mb-4"><Card {entry} /></li>
 	{/each}
 </ul>

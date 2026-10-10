@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
 	import Markdown from '#lib/components/Markdown.svelte';
-	import Rating from '#lib/components/Rating.svelte';
+	import Rating from '../Rating.svelte';
 	import { formatMediaDate } from '#lib/date.js';
 	import type { PageProps } from './$types';
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Back from '#lib/components/Back.svelte';
-	import PhotoThumb from '#lib/components/PhotoThumb.svelte';
+	import Thumb from './Thumb.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -28,6 +28,6 @@
 
 <div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-3 lg:grid-cols-4">
 	{#each data.photos as photo (photo.id)}
-		<PhotoThumb {photo} />
+		<Thumb {photo} />
 	{/each}
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
-	import ProjectCard from '#lib/components/ProjectCard.svelte';
+	import Card from './Card.svelte';
 	import { formatBlogDate } from '#lib/date.js';
 	import type { PageProps } from './$types';
 
@@ -22,7 +22,7 @@
 
 <ul class="mt-8 grid grid-cols-1 gap-3">
 	{#each Object.entries(data.projects) as [name, project] (name)}
-		<ProjectCard {name} {project} />
+		<Card {name} {project} />
 	{/each}
 </ul>
 
