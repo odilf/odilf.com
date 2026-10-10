@@ -1,20 +1,11 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
-    inputs@{
-      nixpkgs,
-      rust-overlay,
-      flake-parts,
-      ...
-    }:
+    inputs@{ nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -26,8 +17,7 @@
       perSystem =
         { system, ... }:
         let
-          overlays = [ (import rust-overlay) ];
-          pkgs = import nixpkgs { inherit system overlays; };
+          pkgs = import nixpkgs { inherit system; };
         in
         {
           formatter = pkgs.nixfmt-rfc-style;
@@ -40,7 +30,7 @@
               pkgs.typescript-language-server
 
               (pkgs.writeShellScriptBin "deploy" ''
-                echo TODO: Write script here && exit 1 && ${pkgs.wrangler}/bin/wrangler pages deploy target/release/site/ --project-name "odilf-site" --branch main
+                ${pkgs.wrangler}/bin/wrangler pages deploy build/ --project-name "odilf-site" --branch main
               '')
             ];
           };

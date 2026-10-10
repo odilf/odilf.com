@@ -18,6 +18,11 @@ export default defineConfig({
 			adapter: adapter(),
 		}),
 	],
+	server: {
+		watch: {
+			ignored: ['**/.direnv/**'],
+		},
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

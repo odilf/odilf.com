@@ -16,7 +16,7 @@
 		"fetch:pics": "tsx scripts/fetch-pics.ts",
 		"copy:blog": "tsx scripts/copy-blog-assets.ts",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "pnpm run test:unit -- --run"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
