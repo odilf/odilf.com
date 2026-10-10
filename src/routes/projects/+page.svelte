@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
 	import Card from './Card.svelte';
-	import { formatBlogDate } from '#lib/date.js';
+	import { formatHumanAbsoluteDate } from '#lib/date.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -26,4 +26,4 @@
 	{/each}
 </ul>
 
-<p class="faint mt-8 text-xs">Last updated: {formatBlogDate(data.lastFetched)}</p>
+<p class="faint mt-8 text-xs">Last updated: {formatHumanAbsoluteDate(data.lastFetched)}</p>

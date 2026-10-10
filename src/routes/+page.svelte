@@ -1,36 +1,28 @@
 <script lang="ts">
-	import ThemeToggle from '#lib/components/ThemeToggle.svelte';
+	import ThemeSelector from '#lib/components/ThemeSelector.svelte';
 
-	const links = [
-		{
-			href: '/blog/',
-			label: 'blog',
-			description: 'some thoughts, stories and reflections from throughout the years.',
-		},
-		{ href: '/pics/', label: 'pics', description: "pictures I've taken." },
-		{
-			href: '/media-log/',
-			label: 'media log',
-			description: 'logging and reviews of books, movies and videogames.',
-		},
-		{ href: '/projects/', label: 'projects', description: 'most of my personal coding projects.' },
-		{ href: '/about/', label: 'about', description: 'information about me and CV' },
-	];
+	const pages = {
+		blog: 'some thoughts, stories and reflections from throughout the years.',
+		pics: "pictures I've taken.",
+		'media log': 'logging and reviews of books, movies and videogames.',
+		projects: 'most of my personal coding projects.',
+		about: 'information about me and CV',
+	} as const;
 </script>
 
 <div class="flex">
 	<h1 class="flex-1">hi, i'm Ody 👋</h1>
-	<ThemeToggle />
+	<ThemeSelector />
 </div>
 
 <p class="faint mb-4">go ahead and take a look at what's here ^^</p>
 
 <ol class="flex flex-col gap-2">
-	{#each links as link (link.href)}
-		<li class="text-xl text-secondary hover:underline">
-			<a href={link.href}>
-				<p>> {link.label}</p>
-				<p class="text-sm text-primary-soft">{link.description}</p>
+	{#each Object.entries(pages) as [label, desc] (label)}
+		<li class="text-2xl text-secondary hover:underline">
+			<a href="/{label.split(' ').join('-')}">
+				<p>> {label}</p>
+				<p class="text-lg text-primary-soft">{desc}</p>
 			</a>
 		</li>
 	{/each}

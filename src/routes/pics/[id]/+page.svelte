@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Back from '#lib/components/Back.svelte';
 	import { fullImage } from '#lib/images.js';
+	import { pickRandom } from '#lib/random.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -11,11 +12,9 @@
 	let prevId = $derived(data.index > 0 ? data.ids[data.index - 1] : null);
 	let nextId = $derived(data.index < data.ids.length - 1 ? data.ids[data.index + 1] : null);
 
-	// TODO: We could (should?) re-use the random from the parent page.
 	function random() {
-		const filtered = data.ids.filter((id) => id !== data.photo.id);
-		const id = filtered[Math.floor(Math.random() * filtered.length)];
-		goto('/pics/' + id + '/');
+		const id = pickRandom(data.ids, data.photo.id);
+		if (id) goto('/pics/' + id + '/');
 	}
 </script>
 

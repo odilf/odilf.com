@@ -9,7 +9,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified, type Transformer } from 'unified';
 import { visit } from 'unist-util-visit';
-import { blogMetadataSchema, type BlogMetadata } from '../schemas/blog.js';
+import { BlogMetadata } from '#routes/blog/index.js';
 import { rehypeFigure } from './shared.js';
 
 const SUMMARY_LENGTH = 250;
@@ -22,7 +22,7 @@ export interface RenderedMarkdown {
 }
 
 export function parseBlogMetadata(content: string): BlogMetadata | null {
-	const result = blogMetadataSchema.safeParse(matter(content).data);
+	const result = BlogMetadata.safeParse(matter(content).data);
 	return result.success ? result.data : null;
 }
 

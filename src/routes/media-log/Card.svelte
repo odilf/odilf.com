@@ -2,7 +2,7 @@
 	import Markdown from '#lib/components/Markdown.svelte';
 	import Rating from './Rating.svelte';
 	import { formatMediaDate } from '#lib/date.js';
-	import type { MediaLog } from '#lib/schemas/media.js';
+	import type { MediaLog } from '.';
 
 	let { entry }: { entry: MediaLog } = $props();
 </script>
@@ -10,7 +10,7 @@
 <a href="/media-log/{entry.slug}/" class="block">
 	<div class="flex gap-2">
 		<div class="flex-1">
-			<div class="flex w-[calc(100%+2ch)] -translate-x-[2ch] gap-[1ch] text-2xl">
+			<div class="flex w-[calc(100%+2ch)] translate-x-[-2ch] gap-[1ch] text-2xl">
 				<div class="text-primary">></div>
 				<div class="flex-1 font-black">{entry.title}</div>
 			</div>

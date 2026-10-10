@@ -13,7 +13,7 @@
 	<div class="flex gap-1 transition-all duration-200">
 		{#each options as option (option.value)}
 			<button
-				class="w-[8ch] rounded-xs px-0 py-1 text-center text-xs outline-1 outline-white"
+				class="w-[8ch] px-0 py-1 text-center text-xs"
 				disabled={theme.current === option.value}
 				title="{option.label} mode"
 				onclick={() => theme.select(option.value)}

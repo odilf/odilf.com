@@ -14,8 +14,8 @@
 :root {
 	color-scheme: dark;
 
-	--theme-color-neutral: light-dark(oklch(0.9 0.005 236), oklch(3.97% 0.0074 99));
-	--theme-color-primary: light-dark(oklch(0.0559 0.0937 57.18), oklch(99.99996% 0.000345 99));
+	--theme-color-neutral: light-dark(oklch(0.99 0.005 236), oklch(3.97% 0.0074 99));
+	--theme-color-primary: light-dark(oklch(0.0559 0.0937 57.18), oklch(99% 0.000345 99));
 	--theme-color-primary-intense: light-dark(oklch(0.6 0.301 90), oklch(0.94 0.1011 96));
 	--theme-color-primary-soft: light-dark(oklch(0.31 0.0011 96), oklch(0.84 0.0111 96));
 	--theme-color-secondary: light-dark(oklch(0.5382 0.1283 322.41), oklch(92.5% 0.0937 322.41));
@@ -71,7 +71,7 @@ body {
 	}
 
 	.faint {
-		opacity: 80%;
+		opacity: 70%;
 		font-weight: light;
 	}
 
@@ -92,7 +92,6 @@ body {
 
 	.prose {
 		color: var(--theme-color-primary-soft);
-		font-weight: 400;
 
 		h2 {
 			font-size: var(--text-2xl);
@@ -167,6 +166,7 @@ body {
 			content: counter(heading) ') ';
 			counter-increment: heading;
 		}
+
 		h2 {
 			counter-reset: subheading;
 		}
@@ -187,9 +187,11 @@ body {
 	button:hover {
 		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 25%);
 	}
+
 	button:active {
 		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 45%);
 	}
+
 	button:disabled {
 		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 80%);
 		color: var(--color-primary);

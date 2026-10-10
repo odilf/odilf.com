@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { building } from '$app/env';
 import { ODILF_BLOG_PATH } from '$app/env/private';
 import { parseBlogMetadata, renderBlogMarkdown } from '#lib/markdown/index.js';
-import type { BlogEntry } from '#lib/schemas/blog.js';
+import type { BlogEntry } from '#routes/blog/index.js';
 
 export interface BlogContent {
 	entries: BlogEntry[];

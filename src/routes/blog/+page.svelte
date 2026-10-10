@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
-	import EntryCard from './EntryCard.svelte';
+	import Card from './Card.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -31,6 +31,6 @@
 
 <ul>
 	{#each visible as entry (entry.slug)}
-		<li class="mb-4"><EntryCard {entry} /></li>
+		<li class="mb-4"><Card {entry} /></li>
 	{/each}
 </ul>

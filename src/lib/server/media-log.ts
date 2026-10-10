@@ -5,7 +5,7 @@ import { building } from '$app/env';
 import { ODILF_MEDIA_LOG_PATH } from '$app/env/private';
 import { mediaDateTimestamp } from '#lib/date.js';
 import { parseMediaMetadata, renderMediaReview } from '#lib/markdown/index.js';
-import type { MediaLog } from '#lib/schemas/media.js';
+import type { MediaLog } from '#routes/media-log/index.js';
 
 const COVER_CACHE_DIR = join(process.cwd(), '.cache/media-log-covers');
 const USER_AGENT = 'odilf.com build';

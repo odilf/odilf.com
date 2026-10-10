@@ -1,4 +1,4 @@
-import type { BlogEntry } from '#lib/schemas/blog.js';
+import type { BlogEntry } from '#routes/blog/index.js';
 
 const SITE = 'https://odilf.com';
 const FEED_TITLE = "Odilf's blog";

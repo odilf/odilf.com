@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Tag from '#lib/components/Tag.svelte';
-	import { formatBlogDate } from '#lib/date.js';
-	import type { BlogEntry } from '#lib/schemas/blog.js';
+	import { formatHumanAbsoluteDate } from '#lib/date.js';
+	import type { BlogEntry } from './index.js';
 
 	let { entry }: { entry: BlogEntry } = $props();
 
@@ -14,7 +14,7 @@
 		<div class="pr-[1ch] text-lg text-primary">></div>
 		<div class="flex-1 text-lg font-bold text-balance">{entry.metadata.title}</div>
 		{#if entry.metadata.date}
-			<div class="font-light text-primary">{formatBlogDate(entry.metadata.date)}</div>
+			<div class="font-light text-primary">{formatHumanAbsoluteDate(entry.metadata.date)}</div>
 		{/if}
 	</div>
 
@@ -23,12 +23,12 @@
 
 		<div class="no-no-underline grid gap-1">
 			<div class="flex justify-evenly gap-1">
-				{#each tags.slice(0, half) as tag, index (index)}
+				{#each tags.slice(0, half) as tag (tag)}
 					<Tag topic={tag} />
 				{/each}
 			</div>
 			<div class="flex justify-evenly gap-1">
-				{#each tags.slice(half) as tag, index (index)}
+				{#each tags.slice(half) as tag (tag)}
 					<Tag topic={tag} />
 				{/each}
 			</div>
