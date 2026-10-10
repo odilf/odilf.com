@@ -1,24 +1,26 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { z } from 'zod';
 import { building } from '$app/env';
 import { ODILF_MEDIA_LOG_PATH } from '$app/env/private';
 import { mediaDateTimestamp } from '#lib/date.js';
 import { parseMediaMetadata, renderMediaReview } from '#lib/markdown/index.js';
-import type { MediaLog } from '#lib/types.js';
+import type { MediaLog } from '#lib/schemas/media.js';
 
 const COVER_CACHE_DIR = join(process.cwd(), '.cache/media-log-covers');
 const USER_AGENT = 'odilf.com build';
 const MAX_ATTEMPTS = 3;
 
-interface WikipediaPage {
-	pageprops?: { page_image?: string };
-	imageinfo?: { url?: string }[];
-	original?: { source?: string };
-}
+const wikipediaPageSchema = z.object({
+	pageprops: z.object({ page_image: z.string().optional() }).optional(),
+	imageinfo: z.array(z.object({ url: z.string().optional() })).optional(),
+	original: z.object({ source: z.string().optional() }).optional(),
+});
 
-interface WikipediaResponse {
-	query?: { pages?: Record<string, WikipediaPage> };
-}
+const wikipediaResponseSchema = z.object({
+	query: z.object({ pages: z.record(z.string(), wikipediaPageSchema) }).optional(),
+});
+type WikipediaResponse = z.infer<typeof wikipediaResponseSchema>;
 
 let buildCache: Promise<MediaLog[]> | undefined;
 
@@ -155,8 +157,7 @@ async function wikipediaQuery(params: Record<string, string>): Promise<Wikipedia
 	});
 	if (!response.ok) throw new Error(`Wikipedia request failed with ${response.status}`);
 
-	// TODO(zod)
-	return (await response.json()) as WikipediaResponse;
+	return wikipediaResponseSchema.parse(await response.json());
 }
 
 function sleep(ms: number): Promise<void> {

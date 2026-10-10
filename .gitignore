@@ -27,3 +27,5 @@ vite.config.ts.timestamp-*
 .cache/
 /assets/pics/
 /static/blog/
+
+.jj

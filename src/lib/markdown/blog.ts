@@ -9,8 +9,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified, type Transformer } from 'unified';
 import { visit } from 'unist-util-visit';
-import { toIsoDate } from '../date.js';
-import type { BlogMetadata } from '../types.js';
+import { blogMetadataSchema, type BlogMetadata } from '../schemas/blog.js';
 import { rehypeFigure } from './shared.js';
 
 const SUMMARY_LENGTH = 250;
@@ -23,17 +22,8 @@ export interface RenderedMarkdown {
 }
 
 export function parseBlogMetadata(content: string): BlogMetadata | null {
-	const { data } = matter(content);
-	if (typeof data.title !== 'string') return null;
-
-	return {
-		title: data.title,
-		date: toIsoDate(data.date),
-		draft: typeof data.draft === 'boolean' ? data.draft : null,
-		topics: Array.isArray(data.topics) ? data.topics.map((topic) => String(topic)) : [],
-		lang: String(data.lang).toLowerCase() === 'spanish' ? 'spanish' : 'english',
-		numberedHeadings: data['numbered-headings'] !== false,
-	};
+	const result = blogMetadataSchema.safeParse(matter(content).data);
+	return result.success ? result.data : null;
 }
 
 export function renderBlogMarkdown(content: string): RenderedMarkdown {

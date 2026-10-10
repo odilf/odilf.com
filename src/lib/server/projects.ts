@@ -1,13 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parse } from 'smol-toml';
-import type { Project, Projects, ProjectsFile } from '#lib/types.js';
+import { projectsFileSchema, type Project, type Projects } from '#lib/schemas/projects.js';
 
 const PROJECTS_FILE = join(process.cwd(), 'projects.toml');
 
 export async function loadProjects(): Promise<Projects> {
-	// TODO(zod)
-	const file = parse(await readFile(PROJECTS_FILE, 'utf8')) as unknown as ProjectsFile;
+	const file = projectsFileSchema.parse(parse(await readFile(PROJECTS_FILE, 'utf8')));
 
 	const projects: Record<string, Project> = {};
 	for (const [name, entry] of Object.entries(file.projects)) {

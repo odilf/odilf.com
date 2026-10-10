@@ -1,16 +1,22 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Photo } from '#lib/types.js';
+import { photosSchema, type Photo } from '#lib/schemas/pics.js';
 
 const METADATA_FILE = join(process.cwd(), '.cache/pics/metadata.json');
 
 export async function loadPhotos(): Promise<Photo[]> {
-	let photos: Photo[];
+	let raw: string;
 	try {
-		// TODO(zod)
-		photos = JSON.parse(await readFile(METADATA_FILE, 'utf8')) as Photo[];
+		raw = await readFile(METADATA_FILE, 'utf8');
 	} catch {
 		return [];
+	}
+
+	let photos: Photo[];
+	try {
+		photos = photosSchema.parse(JSON.parse(raw));
+	} catch (error) {
+		throw new Error(`Invalid pics metadata at ${METADATA_FILE}`, { cause: error });
 	}
 
 	const last = photos.findIndex(

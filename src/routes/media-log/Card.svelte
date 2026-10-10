@@ -2,7 +2,7 @@
 	import Markdown from '#lib/components/Markdown.svelte';
 	import Rating from './Rating.svelte';
 	import { formatMediaDate } from '#lib/date.js';
-	import type { MediaLog } from '#lib/types.js';
+	import type { MediaLog } from '#lib/schemas/media.js';
 
 	let { entry }: { entry: MediaLog } = $props();
 </script>

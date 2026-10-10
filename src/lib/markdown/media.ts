@@ -7,8 +7,7 @@ import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
-import { toIsoDate } from '../date.js';
-import type { MediaDate, MediaLogFrontmatter, MediaType } from '../types.js';
+import { mediaLogFrontmatterSchema, type MediaLogFrontmatter } from '../schemas/media.js';
 import { rehypeFigure } from './shared.js';
 
 export function parseMediaMetadata(content: string): MediaLogFrontmatter {
@@ -17,14 +16,7 @@ export function parseMediaMetadata(content: string): MediaLogFrontmatter {
 		throw new Error('`review` field present in frontmatter');
 	}
 
-	return {
-		title: String(data.title),
-		type: data.type as MediaType,
-		rating: Number(data.rating),
-		date: toMediaDate(data.date),
-		urls: Array.isArray(data.urls) ? data.urls.map((url) => String(url)) : [],
-		'image-url': typeof data['image-url'] === 'string' ? data['image-url'] : undefined,
-	};
+	return mediaLogFrontmatterSchema.parse(data);
 }
 
 export function renderMediaReview(content: string): string {
@@ -42,17 +34,4 @@ export function renderMediaReview(content: string): string {
 			.use(rehypeStringify, { allowDangerousHtml: true })
 			.processSync(body),
 	);
-}
-
-function toMediaDate(value: unknown): MediaDate {
-	if (Array.isArray(value)) {
-		const start = toIsoDate(value[0]);
-		const end = toIsoDate(value[1]);
-		if (start && end) return [start, end];
-	}
-
-	const single = toIsoDate(value);
-	if (single) return single;
-
-	throw new Error('Invalid media date');
 }

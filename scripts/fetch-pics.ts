@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, extname, join } from 'node:path';
 import { promisify } from 'node:util';
-import type { Photo } from '#lib/types.js';
+import { z } from 'zod';
+import type { Photo } from '#lib/schemas/pics.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -21,15 +22,21 @@ const PAGE_SIZE = 1000;
 // Formats the build reads directly; everything else gets a side-by-side JPEG derivative.
 const DIRECT_FORMATS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
-interface ImmichAsset {
-	id: string;
-	originalFileName?: string;
-	exifInfo?: { description?: string | null } | null;
-}
+const immichAssetSchema = z.object({
+	id: z.string(),
+	originalFileName: z.string().nullish(),
+	exifInfo: z.object({ description: z.string().nullish() }).nullish(),
+});
+type ImmichAsset = z.infer<typeof immichAssetSchema>;
 
-interface ImmichSearchResponse {
-	assets?: { items?: ImmichAsset[]; nextPage?: string | number | null };
-}
+const immichSearchResponseSchema = z.object({
+	assets: z
+		.object({
+			items: z.array(immichAssetSchema).optional(),
+			nextPage: z.union([z.string(), z.number()]).nullish(),
+		})
+		.optional(),
+});
 
 async function fetchAssets(): Promise<ImmichAsset[]> {
 	const assets: ImmichAsset[] = [];
@@ -43,8 +50,7 @@ async function fetchAssets(): Promise<ImmichAsset[]> {
 		});
 		if (!response.ok) throw new Error(`Immich search failed with ${response.status}`);
 
-		// TODO(zod)
-		const data = (await response.json()) as ImmichSearchResponse;
+		const data = immichSearchResponseSchema.parse(await response.json());
 		assets.push(...(data.assets?.items ?? []));
 
 		const nextPage = data.assets?.nextPage;

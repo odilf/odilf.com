@@ -1,4 +1,4 @@
-import type { MediaDate } from './types.js';
+import type { MediaDate } from './schemas/media.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

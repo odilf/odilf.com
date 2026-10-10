@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Tag from '#lib/components/Tag.svelte';
 	import { formatMonthYear } from '#lib/date.js';
-	import { projectMainLink, type Project } from '#lib/types.js';
+	import { projectMainLink } from '#lib/projects.js';
+	import type { Project } from '#lib/schemas/projects.js';
 
 	let { name, project }: { name: string; project: Project } = $props();
 

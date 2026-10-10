@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Back from '#lib/components/Back.svelte';
 	import Card from './Card.svelte';
-	import type { MediaType } from '#lib/types.js';
+	import type { MediaType } from '#lib/schemas/media.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();

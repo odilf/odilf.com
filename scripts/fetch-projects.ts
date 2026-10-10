@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import * as toml from 'smol-toml';
-import type { ProjectFileEntry, ProjectsFile } from '#lib/types.js';
+import { z } from 'zod';
+import type { ProjectFileEntry, ProjectsFile } from '#lib/schemas/projects.js';
 
 const PERSONAL_PROJECTS = [
 	'identity-crisis',
@@ -31,16 +32,16 @@ const PERSONAL_PROJECTS = [
 	'baselga-timer',
 ];
 
-interface GithubRepo {
-	name: string;
-	html_url: string;
-	description: string | null;
-	homepage: string | null;
-	created_at: string;
-	pushed_at: string;
-	language: string | null;
-	topics: string[] | null;
-}
+const githubRepoSchema = z.object({
+	name: z.string(),
+	html_url: z.string(),
+	description: z.string().nullish(),
+	homepage: z.string().nullish(),
+	created_at: z.string(),
+	pushed_at: z.string(),
+	language: z.string().nullish(),
+	topics: z.array(z.string()).nullish(),
+});
 
 const token = process.env.GITHUB_TOKEN;
 if (!token) throw new Error('GITHUB_TOKEN is not set');
@@ -53,8 +54,7 @@ for (const name of PERSONAL_PROJECTS) {
 	});
 	if (!response.ok) throw new Error(`Failed to fetch ${name}: ${response.status}`);
 
-	// TODO(zod)
-	const repo = (await response.json()) as GithubRepo;
+	const repo = githubRepoSchema.parse(await response.json());
 	const entry: ProjectFileEntry = {
 		description: repo.description ?? '',
 		source_code_url: repo.html_url,

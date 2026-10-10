@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { thumbImage } from '#lib/images.js';
-	import type { Photo } from '#lib/types.js';
+	import type { Photo } from '#lib/schemas/pics.js';
 
 	let { photo }: { photo: Photo } = $props();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Tag from '#lib/components/Tag.svelte';
 	import { formatBlogDate } from '#lib/date.js';
-	import type { BlogEntry } from '#lib/types.js';
+	import type { BlogEntry } from '#lib/schemas/blog.js';
 
 	let { entry }: { entry: BlogEntry } = $props();
 
