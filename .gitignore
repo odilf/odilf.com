@@ -25,5 +25,5 @@ vite.config.ts.timestamp-*
 
 # Generated content
 .cache/
-/static/pics/
+/assets/pics/
 /static/blog/

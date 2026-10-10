@@ -1,8 +1,11 @@
+import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import sharp from 'sharp';
+import { dirname, extname, join } from 'node:path';
+import { promisify } from 'node:util';
 import type { Photo } from '#lib/types.js';
+
+const execFileAsync = promisify(execFile);
 
 const immichUrl = process.env.IMMICH_URL?.replace(/\/$/, '') ?? '';
 const albumId = process.env.IMMICH_ALBUM_ID ?? '';
@@ -11,12 +14,12 @@ if (!immichUrl || !albumId || !apiKey) {
 	throw new Error('IMMICH_URL, IMMICH_ALBUM_ID and IMMICH_API_KEY must be set');
 }
 
-const IMAGES_DIR = join(process.cwd(), 'static/pics');
+const IMAGES_DIR = join(process.cwd(), 'assets/pics');
 const METADATA_FILE = join(process.cwd(), '.cache/pics/metadata.json');
-const THUMB_SIZE = 400;
 const PAGE_SIZE = 1000;
 
-type Source = 'original' | 'preview';
+// Formats the build reads directly; everything else gets a side-by-side JPEG derivative.
+const DIRECT_FORMATS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 interface ImmichAsset {
 	id: string;
@@ -52,70 +55,98 @@ async function fetchAssets(): Promise<ImmichAsset[]> {
 	return assets;
 }
 
-async function download(assetId: string, source: Source): Promise<Buffer> {
-	const path =
-		source === 'original'
-			? `/api/assets/${assetId}/original?edited=true`
-			: `/api/assets/${assetId}/thumbnail?size=preview`;
+async function download(path: string, accept?: string): Promise<Buffer> {
+	const headers: Record<string, string> = { 'x-api-key': apiKey };
+	if (accept) headers.accept = accept;
 
-	const response = await fetch(`${immichUrl}${path}`, { headers: { 'x-api-key': apiKey } });
-	if (!response.ok) throw new Error(`${source} request failed with ${response.status}`);
+	const response = await fetch(`${immichUrl}${path}`, { headers });
+	if (!response.ok) throw new Error(`Immich request failed with ${response.status}`);
 
 	return Buffer.from(await response.arrayBuffer());
 }
 
-async function convert(buffer: Buffer, fullPath: string, thumbPath: string): Promise<void> {
-	await sharp(buffer).rotate().webp({ quality: 85 }).toFile(fullPath);
-	await sharp(buffer)
-		.rotate()
-		.resize(THUMB_SIZE, THUMB_SIZE, { fit: 'inside', withoutEnlargement: true })
-		.webp()
-		.toFile(thumbPath);
+function describeError(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+async function magick(inputPath: string, outputPath: string): Promise<void> {
+	try {
+		await execFileAsync('magick', [
+			inputPath,
+			'-auto-orient',
+			'-strip',
+			'-quality',
+			'92',
+			outputPath,
+		]);
+	} catch (error) {
+		const stderr = (error as { stderr?: string }).stderr?.trim();
+		throw new Error(stderr || (error instanceof Error ? error.message : String(error)), {
+			cause: error,
+		});
+	}
+}
+
+async function ensureOriginal(id: string, originalPath: string): Promise<void> {
+	if (existsSync(originalPath)) return;
+
+	await writeFile(originalPath, await download(`/api/assets/${id}/original?edited=true`));
+}
+
+async function ensureRender(
+	id: string,
+	ext: string,
+	originalPath: string,
+	jpgPath: string,
+): Promise<void> {
+	if (DIRECT_FORMATS.has(ext) || existsSync(jpgPath)) return;
+
+	try {
+		await magick(originalPath, jpgPath);
+		return;
+	} catch (directError) {
+		await rm(jpgPath, { force: true });
+
+		// Originals ImageMagick can't read fall back to Immich's server-rendered preview.
+		const previewPath = `${jpgPath}.preview`;
+		try {
+			await writeFile(
+				previewPath,
+				await download(`/api/assets/${id}/thumbnail?size=preview`, 'image/jpeg'),
+			);
+			await magick(previewPath, jpgPath);
+		} catch (previewError) {
+			throw new Error(
+				`could not render ${id} from original (${describeError(directError)}) nor preview (${describeError(previewError)})`,
+				{ cause: previewError },
+			);
+		} finally {
+			await rm(previewPath, { force: true });
+		}
+	}
 }
 
 await mkdir(IMAGES_DIR, { recursive: true });
-await mkdir(join(process.cwd(), '.cache/pics'), { recursive: true });
+await mkdir(dirname(METADATA_FILE), { recursive: true });
 
 const assets = await fetchAssets();
 const photos: Photo[] = [];
 let skipped = 0;
 
 for (const asset of assets) {
-	const fullPath = join(IMAGES_DIR, `${asset.id}.webp`);
-	const thumbPath = join(IMAGES_DIR, `${asset.id}_thumb.webp`);
+	const ext = (extname(asset.originalFileName ?? '') || '.jpg').toLowerCase();
+	const originalPath = join(IMAGES_DIR, `${asset.id}${ext}`);
+	const jpgPath = join(IMAGES_DIR, `${asset.id}.jpg`);
 
-	if (!existsSync(fullPath) || !existsSync(thumbPath)) {
-		// HEIC needs an HEVC decoder the prebuilt sharp lacks, so it goes straight to Immich's
-		// server-rendered preview, which requires the `asset.view` permission on the API key.
-		const filename = (asset.originalFileName ?? '').toLowerCase();
-		const sources: Source[] = /\.(heic|heif)$/.test(filename)
-			? ['preview']
-			: ['original', 'preview'];
-
-		let converted = false;
-		let failure: unknown;
-
-		for (const source of sources) {
-			try {
-				await convert(await download(asset.id, source), fullPath, thumbPath);
-				converted = true;
-				break;
-			} catch (error) {
-				failure = error;
-			}
-		}
-
-		if (!converted) {
-			await rm(fullPath, { force: true });
-			await rm(thumbPath, { force: true });
-			skipped++;
-			console.warn(
-				`Skipping ${asset.id}: ${failure instanceof Error ? failure.message : String(failure)}`,
-			);
-			continue;
-		}
-
-		console.log(`Processed ${asset.id}`);
+	try {
+		const missing = !existsSync(originalPath);
+		await ensureOriginal(asset.id, originalPath);
+		if (missing) console.log(`Downloaded ${asset.id}${ext}`);
+		await ensureRender(asset.id, ext, originalPath, jpgPath);
+	} catch (error) {
+		skipped++;
+		console.warn(`Skipping ${asset.id}: ${describeError(error)}`);
+		continue;
 	}
 
 	photos.push({

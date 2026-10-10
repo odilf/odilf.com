@@ -28,6 +28,7 @@
               pkgs.svelte-language-server
               pkgs.tailwindcss-language-server
               pkgs.typescript-language-server
+              pkgs.imagemagick
 
               (pkgs.writeShellScriptBin "deploy" ''
                 ${pkgs.wrangler}/bin/wrangler pages deploy build/ --project-name "odilf-site" --branch main

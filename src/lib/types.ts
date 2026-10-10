@@ -93,11 +93,3 @@ export interface Photo {
 export function projectMainLink(project: Project): string {
 	return project.websiteUrl ?? project.sourceCodeUrl;
 }
-
-export function photoPath(id: string): string {
-	return `/pics/${id}.webp`;
-}
-
-export function photoThumbPath(id: string): string {
-	return `/pics/${id}_thumb.webp`;
-}

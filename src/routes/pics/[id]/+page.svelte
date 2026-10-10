@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Back from '#lib/components/Back.svelte';
-	import { photoPath } from '#lib/types.js';
+	import { fullImage } from '#lib/images.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	const image = $derived(fullImage(data.photo.id));
 
 	let prevId = $derived(data.index > 0 ? data.ids[data.index - 1] : null);
 	let nextId = $derived(data.index < data.ids.length - 1 ? data.ids[data.index + 1] : null);
@@ -37,11 +39,15 @@
 		{/if}
 	</nav>
 
-	<img
-		class="mt-8 max-h-[calc(100dvh-200px)] max-w-full"
-		src={photoPath(data.photo.id)}
-		alt={data.photo.caption}
-	/>
+	{#if image}
+		<enhanced:img
+			class="mt-8 max-h-[calc(100dvh-200px)] max-w-full"
+			src={image}
+			alt={data.photo.caption}
+			sizes="min(100vw, 1920px)"
+			fetchpriority="high"
+		/>
+	{/if}
 
 	<div class="mt-4 flex items-center justify-center gap-6 text-center">
 		<p class="text-primary-intense opacity-80">{data.photo.caption}</p>
