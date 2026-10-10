@@ -7,10 +7,7 @@
 
 	let { data }: PageProps = $props();
 
-	let tags = $derived([
-		...data.entry.metadata.topics,
-		`${(data.entry.wordCount / 1000).toFixed(1)}k words`,
-	]);
+	let tags = $derived(data.entry.tags());
 </script>
 
 <!-- TODO: Is there a better way to bundle just the necessary katex or something like that? -->

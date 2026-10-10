@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { building } from '$app/env';
 import { ODILF_BLOG_PATH } from '$app/env/private';
 import { parseBlogMetadata, renderBlogMarkdown } from '#lib/markdown/index.js';
-import type { BlogEntry } from '#routes/blog/index.js';
+import { BlogEntry } from '#routes/blog/index.js';
 
 export interface BlogContent {
 	entries: BlogEntry[];
@@ -34,13 +34,13 @@ async function loadBlogEntriesUncached(): Promise<BlogContent> {
 
 		const rendered = renderBlogMarkdown(content);
 		referencedLinks.push(...rendered.referencedLinks);
-		entries.push({
+		entries.push(new BlogEntry({
 			slug: file.name.slice(0, -'.md'.length),
 			html: rendered.html,
 			summary: rendered.summary,
 			wordCount: rendered.wordCount,
 			metadata,
-		});
+		}));
 	}
 
 	entries.sort((a, b) => (b.metadata.date ?? '').localeCompare(a.metadata.date ?? ''));

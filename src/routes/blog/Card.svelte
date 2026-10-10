@@ -5,7 +5,7 @@
 
 	let { entry }: { entry: BlogEntry } = $props();
 
-	let tags = $derived([...entry.metadata.topics, `${(entry.wordCount / 1000).toFixed(1)}k words`]);
+	let tags = $derived(entry.tags());
 	let half = $derived(Math.ceil(tags.length / 2));
 </script>
 

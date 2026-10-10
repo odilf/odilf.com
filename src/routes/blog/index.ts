@@ -1,3 +1,4 @@
+import { Data } from '#lib';
 import { Ymd } from '#lib/date.js';
 import { z } from 'zod';
 
@@ -26,10 +27,14 @@ export const BlogMetadata = z
 
 export type BlogMetadata = z.infer<typeof BlogMetadata>;
 
-export interface BlogEntry {
+export class BlogEntry extends Data<{
 	slug: string;
 	html: string;
 	summary: string;
 	wordCount: number;
 	metadata: BlogMetadata;
+}>() {
+	tags(): string[] {
+		return [...this.metadata.topics, `${(this.wordCount / 1000).toFixed(1)}k words`]	
+	}
 }
