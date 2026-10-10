@@ -13,7 +13,9 @@ export async function loadPhotos(): Promise<Photo[]> {
 		return [];
 	}
 
-	const last = photos.findIndex((photo) => photo.caption === "and in every timeline, you're still there");
+	const last = photos.findIndex(
+		(photo) => photo.caption === "and in every timeline, you're still there",
+	);
 	if (last !== -1) photos.push(...photos.splice(last, 1));
 
 	return photos;

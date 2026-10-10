@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { dev } from '$app/env';
 	import Back from '#lib/components/Back.svelte';
 	import BlogEntryCard from '#lib/components/BlogEntryCard.svelte';
 	import type { PageProps } from './$types';
@@ -16,10 +15,10 @@
 
 	let topic = $state<TopicFilter>('all');
 
-	// Only show drafts in development
-	let entries = $derived(data.entries.filter((entry) => dev || !entry.metadata.draft));
 	let visible = $derived(
-		topic === 'all' ? entries : entries.filter((entry) => entry.metadata.topics.includes(topic)),
+		topic === 'all'
+			? data.entries
+			: data.entries.filter((entry) => entry.metadata.topics.includes(topic)),
 	);
 </script>
 

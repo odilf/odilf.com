@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "pnpm copy:blog && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -14,11 +14,13 @@
 		"format": "prettier --write .",
 		"fetch:projects": "tsx scripts/fetch-projects.ts",
 		"fetch:pics": "tsx scripts/fetch-pics.ts",
+		"copy:blog": "tsx scripts/copy-blog-assets.ts",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"@sveltejs/adapter-static": "^4.0.0",
 		"@sveltejs/enhanced-img": "^1.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
@@ -52,7 +54,6 @@
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"@sveltejs/adapter-static": "^4.0.0",
 		"gray-matter": "^4.0.3",
 		"katex": "^0.19.0",
 		"rehype-katex": "^7.0.1",

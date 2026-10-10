@@ -1,6 +1,6 @@
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import tailwindcss from '@tailwindcss/vite';
-// import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-static';
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
@@ -15,7 +15,7 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
 			},
-			// adapter: adapter()
+			adapter: adapter(),
 		}),
 	],
 	test: {

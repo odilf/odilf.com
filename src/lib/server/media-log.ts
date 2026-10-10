@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { building } from '$app/env';
 import { ODILF_MEDIA_LOG_PATH } from '$app/env/private';
 import { mediaDateTimestamp } from '#lib/date.js';
 import { parseMediaMetadata, renderMediaReview } from '#lib/markdown/index.js';
@@ -19,7 +20,15 @@ interface WikipediaResponse {
 	query?: { pages?: Record<string, WikipediaPage> };
 }
 
-export async function loadMediaLogEntries(): Promise<MediaLog[]> {
+let buildCache: Promise<MediaLog[]> | undefined;
+
+export function loadMediaLogEntries(): Promise<MediaLog[]> {
+	if (!building) return loadMediaLogEntriesUncached();
+	buildCache ??= loadMediaLogEntriesUncached();
+	return buildCache;
+}
+
+async function loadMediaLogEntriesUncached(): Promise<MediaLog[]> {
 	const files = await readdir(ODILF_MEDIA_LOG_PATH, { withFileTypes: true });
 	const entries: MediaLog[] = [];
 
@@ -31,7 +40,7 @@ export async function loadMediaLogEntries(): Promise<MediaLog[]> {
 		const metadata = parseMediaMetadata(content);
 		const slug = file.name.slice(0, -'.md'.length);
 
-		// TODO: A `map` here is simpler. 
+		// TODO: A `map` here is simpler.
 		entries.push({
 			slug,
 			title: metadata.title,

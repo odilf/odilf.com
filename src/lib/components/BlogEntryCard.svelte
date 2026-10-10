@@ -9,7 +9,7 @@
 	let half = $derived(Math.ceil(tags.length / 2));
 </script>
 
-<a href="/blog/{entry.slug}/" class="block">
+<a href="/blog/{entry.slug}/" class="block" class:opacity-50={entry.metadata.draft !== false}>
 	<div class="flex">
 		<div class="pr-[1ch] text-lg text-primary">></div>
 		<div class="flex-1 text-lg font-bold text-balance">{entry.metadata.title}</div>

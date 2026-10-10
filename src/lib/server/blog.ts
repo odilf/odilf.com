@@ -10,7 +10,15 @@ export interface BlogContent {
 	referencedLinks: string[];
 }
 
-export async function loadBlogEntries(): Promise<BlogContent> {
+let buildCache: Promise<BlogContent> | undefined;
+
+export function loadBlogEntries(): Promise<BlogContent> {
+	if (!building) return loadBlogEntriesUncached();
+	buildCache ??= loadBlogEntriesUncached();
+	return buildCache;
+}
+
+async function loadBlogEntriesUncached(): Promise<BlogContent> {
 	const files = await readdir(ODILF_BLOG_PATH, { withFileTypes: true });
 	const entries: BlogEntry[] = [];
 	const referencedLinks: string[] = [];

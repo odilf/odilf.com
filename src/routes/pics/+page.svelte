@@ -7,10 +7,10 @@
 	let { data }: PageProps = $props();
 
 	// TODO: Instead of rolling on click, we can roll on page load and just have the
-  // destination determined (so we get, for instance, better preloading).
-  // 
-  // Note however, that an `$effect` would work because that would prerender one
-  // specific random choice, I think.
+	// destination determined (so we get, for instance, better preloading).
+	//
+	// Note however, that an `$effect` would work because that would prerender one
+	// specific random choice, I think.
 	function random() {
 		const id = data.ids[Math.floor(Math.random() * data.ids.length)];
 		goto('/pics/' + id + '/');

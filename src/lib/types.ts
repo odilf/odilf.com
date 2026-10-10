@@ -95,9 +95,9 @@ export function projectMainLink(project: Project): string {
 }
 
 export function photoPath(id: string): string {
-	return `/static/pics/${id}.webp`;
+	return `/pics/${id}.webp`;
 }
 
 export function photoThumbPath(id: string): string {
-	return `/static/pics/${id}_thumb.webp`;
+	return `/pics/${id}_thumb.webp`;
 }
