@@ -19,11 +19,7 @@ export const BlogMetadata = z
 			.optional()
 			.transform((value): Language => (value?.toLowerCase() === 'spanish' ? 'spanish' : 'english')),
 		'numbered-headings': z.boolean().default(true),
-	})
-	.transform(({ 'numbered-headings': numberedHeadings, ...metadata }) => ({
-		...metadata,
-		numberedHeadings,
-	}));
+	});
 
 export type BlogMetadata = z.infer<typeof BlogMetadata>;
 
@@ -35,6 +31,6 @@ export class BlogEntry extends Data<{
 	metadata: BlogMetadata;
 }>() {
 	tags(): string[] {
-		return [...this.metadata.topics, `${(this.wordCount / 1000).toFixed(1)}k words`]	
+		return [...this.metadata.topics, `${(this.wordCount / 1000).toFixed(1)}k words`]
 	}
 }

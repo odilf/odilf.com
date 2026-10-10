@@ -36,7 +36,7 @@
 
 <div
 	class="prose pb-8"
-	class:numbered-headings={data.entry.metadata.numberedHeadings}
+	class:numbered-headings={data.entry.metadata['numbered-headings']}
 	lang={data.entry.metadata.lang === 'spanish' ? 'es' : 'en'}
 >
 	<Markdown html={data.entry.html} />
