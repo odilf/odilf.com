@@ -14,9 +14,12 @@
 <p class="pb-2">most of my personal coding projects.</p>
 <p>
 	Feel free to check out my
-	<a href="https://github.com/odilf" target="_blank" rel="noopener noreferrer">GitHub</a>
+	<a href="https://github.com/odilf" target="_blank" rel="noopener noreferrer">GitHub</a>, my
+	<a href="https://git-archive.odilf.com" target="_blank" rel="noopener noreferrer"
+		>personal git
+	</a>
 	and my
-	<a href="https://git-archive.odilf.com" target="_blank" rel="noopener noreferrer">personal git </a>
+	<a href="https://tangled.org/odilf.com" target="_blank" rel="noopener noreferrer">tangled</a>
 	for a more comprehensive list.
 </p>
 
