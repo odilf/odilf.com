@@ -10,21 +10,23 @@
 
 <Back />
 
-<h1>{data.entry.title}</h1>
+<div class="mx-auto max-w-line-length px-4">
+	<h1>{data.entry.title}</h1>
 
-<div class="flex gap-2">
-	<div class="flex-1">
-		<div class="flex justify-between">
-			<div class="text-2xl text-primary"><Rating rating={data.entry.rating} /></div>
-			<div class="faint text-tertiary">{formatMediaDate(data.entry.date)}</div>
+	<div class="flex gap-2">
+		<div class="flex-1">
+			<div class="flex justify-between">
+				<div class="text-2xl text-primary"><Rating rating={data.entry.rating} /></div>
+				<div class="faint text-tertiary">{formatMediaDate(data.entry.date)}</div>
+			</div>
+
+			<div class="prose faint text-primary">
+				{#if data.entry.review}
+					<Markdown html={data.entry.review} />
+				{/if}
+			</div>
 		</div>
 
-		<div class="prose faint text-primary">
-			{#if data.entry.review}
-				<Markdown html={data.entry.review} />
-			{/if}
-		</div>
+		<img class="w-[30%] object-contain" src={data.entry.imageUrl} alt={data.entry.title} />
 	</div>
-
-	<img class="w-[30%] object-contain" src={data.entry.imageUrl} alt={data.entry.title} />
 </div>

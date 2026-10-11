@@ -19,6 +19,6 @@
 	<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/atom.xml" />
 </svelte:head>
 
-<main class="content py-4">
+<main class="py-4">
 	{@render children()}
 </main>

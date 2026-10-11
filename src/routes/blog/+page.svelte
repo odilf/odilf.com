@@ -18,19 +18,21 @@
 
 <Back />
 
-<h1>blog</h1>
-<p class="faint pb-4">some thoughts, stories and reflections from throughout the years.</p>
+<div class="mx-auto max-w-line-length px-4">
+	<h1>blog</h1>
+	<p class="faint pb-4">some thoughts, stories and reflections from throughout the years.</p>
 
-<div class="mb-4 flex gap-2">
-	{#each topics as option (option)}
-		<button disabled={topic === option} onclick={() => (topic = option)}>
-			{option}
-		</button>
-	{/each}
+	<div class="mb-4 flex gap-2">
+		{#each topics as option (option)}
+			<button disabled={topic === option} onclick={() => (topic = option)}>
+				{option}
+			</button>
+		{/each}
+	</div>
+
+	<ul>
+		{#each visible as entry (entry.slug)}
+			<li class="mb-4"><Card {entry} /></li>
+		{/each}
+	</ul>
 </div>
-
-<ul>
-	{#each visible as entry (entry.slug)}
-		<li class="mb-4"><Card {entry} /></li>
-	{/each}
-</ul>

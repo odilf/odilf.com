@@ -8,7 +8,7 @@ const fullModules = import.meta.glob<Picture>('/assets/pics/*.{jpg,jpeg,png,webp
 
 const thumbModules = import.meta.glob<Picture>('/assets/pics/*.{jpg,jpeg,png,webp}', {
 	eager: true,
-	query: { enhanced: true, w: '400;800' },
+	query: { enhanced: true, w: '160;320;480;640', aspect: '1:1' },
 	import: 'default',
 });
 

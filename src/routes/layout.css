@@ -13,6 +13,7 @@
 		'Iosevka Fallback: Courier New', 'Iosevka Fallback: Ubuntu Mono', 'IosevkaTerm Nerd Font Mono',
 		'IosevkaTerm', 'ZedMono Nerd Font', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
 		'Liberation Mono', 'Courier New', monospace;
+	--container-line-length: 82ch;
 }
 
 :root {
@@ -77,12 +78,6 @@ body {
 	.faint {
 		opacity: 70%;
 		font-weight: light;
-	}
-
-	.content {
-		padding-inline: calc(var(--spacing) * 4);
-		max-width: 82ch;
-		margin-inline: auto;
 	}
 
 	/* Bodge to not show underlines in prose text: we just show an extra

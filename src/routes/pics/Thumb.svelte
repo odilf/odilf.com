@@ -13,7 +13,7 @@
 			class="h-full w-full object-cover opacity-90 transition-opacity duration-50 hover:opacity-100"
 			src={image}
 			alt={photo.caption}
-			sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+			sizes="(min-width: 1024px) min(25vw, 136px), (min-width: 768px) min(33vw, 187px), min(calc(50vw - 40px), 288px)"
 			loading="lazy"
 		/>
 	{/if}

@@ -5,6 +5,8 @@
 </script>
 
 <div class="sticky top-0 right-0 left-0 z-10 bg-neutral opacity-90">
-	<!-- eslint-disable svelte/no-useless-mustaches -->
-	<a href={target}> {'<--'} (back)</a>
+	<div class="mx-auto max-w-line-length px-4">
+		<!-- eslint-disable svelte/no-useless-mustaches -->
+		<a href={target}> {'<--'} (back)</a>
+	</div>
 </div>

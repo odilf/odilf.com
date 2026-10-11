@@ -8,6 +8,7 @@
 	let { data }: PageProps = $props();
 
 	const image = $derived(fullImage(data.photo.id));
+	const imageRatio = $derived(image ? (image.img.w / image.img.h).toFixed(4) : '1');
 
 	let prevId = $derived(data.index > 0 ? data.ids[data.index - 1] : null);
 	let nextId = $derived(data.index < data.ids.length - 1 ? data.ids[data.index + 1] : null);
@@ -20,8 +21,8 @@
 
 <Back />
 
-<div class="flex flex-col items-center">
-	<nav class="grid grid-cols-3 justify-center text-center">
+<div class="flex flex-col items-center px-4">
+	<nav class="grid w-full max-w-md grid-cols-3 justify-center text-center">
 		{#if prevId}
 			<a class="opacity-70 hover:opacity-100" href="/pics/{prevId}/">&lt;- prev</a>
 		{:else}
@@ -40,15 +41,15 @@
 
 	{#if image}
 		<enhanced:img
-			class="mt-8 max-h-[calc(100dvh-200px)] max-w-full"
+			class="mt-8 h-auto max-h-[calc(100dvh-200px)] w-auto max-w-full"
 			src={image}
 			alt={data.photo.caption}
-			sizes="min(100vw, 1920px)"
+			sizes="min(calc(100vw - 2rem), calc((100dvh - 200px) * {imageRatio}))"
 			fetchpriority="high"
 		/>
 	{/if}
 
-	<div class="mt-4 flex items-center justify-center gap-6 text-center">
+	<div class="mt-4 flex max-w-line-length items-center justify-center gap-6 text-center">
 		<p class="text-primary-intense opacity-80">{data.photo.caption}</p>
 		<p class="text-sm text-secondary opacity-50">{data.index + 1} / {data.ids.length}</p>
 	</div>

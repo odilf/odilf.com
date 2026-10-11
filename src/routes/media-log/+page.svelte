@@ -28,37 +28,39 @@
 
 <Back />
 
-<h1>media log</h1>
-<p class="faint pb-2">
-	logging and reviews of books, movies and videogames.
-	<span class="opacity-50">
-		(also available as <a href="/static/media-log.json">JSON</a>)
-	</span>
-</p>
+<div class="mx-auto max-w-line-length px-4">
+	<h1>media log</h1>
+	<p class="faint pb-2">
+		logging and reviews of books, movies and videogames.
+		<span class="opacity-50">
+			(also available as <a href="/static/media-log.json">JSON</a>)
+		</span>
+	</p>
 
-<div class="mb-4 flex gap-2">
-	{#each types as option (option.value)}
-		<button disabled={type === option.value} onclick={() => (type = option.value)}>
-			{option.label}
-		</button>
-	{/each}
+	<div class="mb-4 flex gap-2">
+		{#each types as option (option.value)}
+			<button disabled={type === option.value} onclick={() => (type = option.value)}>
+				{option.label}
+			</button>
+		{/each}
 
-	<div class="flex-1"></div>
+		<div class="flex-1"></div>
 
-	{#each [1, 2, 3, 4, 5] as star (star)}
-		<button
-			class="star-btn bg-neutral px-0 text-2xl text-primary transition hover:text-secondary"
-			class:text-primary-intense={star <= minRating}
-			aria-label="{star} star{star === 1 ? '' : 's'} and up"
-			onclick={() => (minRating = minRating === star ? 0 : star)}
-		>
-			★
-		</button>
-	{/each}
+		{#each [1, 2, 3, 4, 5] as star (star)}
+			<button
+				class="star-btn bg-neutral px-0 text-2xl text-primary transition hover:text-secondary"
+				class:text-primary-intense={star <= minRating}
+				aria-label="{star} star{star === 1 ? '' : 's'} and up"
+				onclick={() => (minRating = minRating === star ? 0 : star)}
+			>
+				★
+			</button>
+		{/each}
+	</div>
+
+	<ul>
+		{#each visible as entry (entry.slug)}
+			<li class="mb-4"><Card {entry} /></li>
+		{/each}
+	</ul>
 </div>
-
-<ul>
-	{#each visible as entry (entry.slug)}
-		<li class="mb-4"><Card {entry} /></li>
-	{/each}
-</ul>
