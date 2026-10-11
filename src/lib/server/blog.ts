@@ -30,7 +30,7 @@ async function loadBlogEntriesUncached(): Promise<BlogContent> {
 		const content = await readFile(join(ODILF_BLOG_PATH, file.name), 'utf8');
 		const metadata = parseBlogMetadata(content);
 		if (!metadata) {
-			console.warn(`Couldn't parse metadata of ${file}`)
+			console.warn(`Couldn't parse metadata of ${file.name}`)
 			return null
 		}
 		if (HIDE_DRAFTS && metadata.draft) return null;

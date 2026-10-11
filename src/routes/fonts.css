@@ -1,116 +1,151 @@
-/* iosevka-latin-100-normal */
-@font-face {
-	font-family: 'Iosevka';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 100;
-	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-100-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-100-normal.woff)
-			format('woff');
-}
+/*
+ * Iosevka, subset to the codepoints this site renders.
+ * Regenerate with `pnpm subset:fonts`.
+ */
 
-/* iosevka-latin-200-normal */
-@font-face {
-	font-family: 'Iosevka';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 200;
-	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-200-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-200-normal.woff)
-			format('woff');
-}
-
-/* iosevka-latin-300-normal */
 @font-face {
 	font-family: 'Iosevka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 300;
 	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-300-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-300-normal.woff)
-			format('woff');
+		local('Iosevka Light'),
+		local('Iosevka-Light'),
+		url('../fonts/iosevka-300-normal.woff2') format('woff2');
 }
 
-/* iosevka-latin-400-normal */
 @font-face {
 	font-family: 'Iosevka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 400;
 	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-400-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-400-normal.woff)
-			format('woff');
+		local('Iosevka'),
+		local('Iosevka-Regular'),
+		url('../fonts/iosevka-400-normal.woff2') format('woff2');
 }
 
-/* iosevka-latin-500-normal */
-@font-face {
-	font-family: 'Iosevka';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 500;
-	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-500-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-500-normal.woff)
-			format('woff');
-}
-
-/* iosevka-latin-600-normal */
 @font-face {
 	font-family: 'Iosevka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 600;
 	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-600-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-600-normal.woff)
-			format('woff');
+		local('Iosevka Semibold'),
+		local('Iosevka-Semibold'),
+		url('../fonts/iosevka-600-normal.woff2') format('woff2');
 }
 
-/* iosevka-latin-700-normal */
 @font-face {
 	font-family: 'Iosevka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 700;
 	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-700-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-700-normal.woff)
-			format('woff');
+		local('Iosevka Bold'),
+		local('Iosevka-Bold'),
+		url('../fonts/iosevka-700-normal.woff2') format('woff2');
 }
 
-/* iosevka-latin-800-normal */
-@font-face {
-	font-family: 'Iosevka';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 800;
-	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-800-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-800-normal.woff)
-			format('woff');
-}
-
-/* iosevka-latin-900-normal */
 @font-face {
 	font-family: 'Iosevka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 900;
 	src:
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-900-normal.woff2)
-			format('woff2'),
-		url(https://cdn.jsdelivr.net/fontsource/fonts/iosevka@latest/latin-900-normal.woff)
-			format('woff');
+		local('Iosevka Heavy'),
+		local('Iosevka-Heavy'),
+		url('../fonts/iosevka-900-normal.woff2') format('woff2');
+}
+
+/* Metric-matched fallbacks. See docs/decisions/0001-font-loading.md. */
+
+@font-face {
+	font-family: 'Iosevka Fallback: SF Mono';
+	src: local('SF Mono'), local('SFMono-Regular');
+	ascent-override: 119.3057%;
+	descent-override: 26.5811%;
+	line-gap-override: 8.6543%;
+	size-adjust: 80.8847%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Menlo';
+	src: local('Menlo'), local('Menlo-Regular');
+	ascent-override: 116.1958%;
+	descent-override: 25.8882%;
+	line-gap-override: 8.4287%;
+	size-adjust: 83.0495%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Consolas';
+	src: local('Consolas');
+	ascent-override: 106.1123%;
+	descent-override: 23.6416%;
+	line-gap-override: 7.6973%;
+	size-adjust: 90.9414%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: DejaVu Sans Mono';
+	src: local('DejaVu Sans Mono'), local('DejaVuSansMono');
+	ascent-override: 116.1958%;
+	descent-override: 25.8882%;
+	line-gap-override: 8.4287%;
+	size-adjust: 83.0495%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Liberation Mono';
+	src: local('Liberation Mono'), local('LiberationMono');
+	ascent-override: 115.8188%;
+	descent-override: 25.8042%;
+	line-gap-override: 8.4014%;
+	size-adjust: 83.3198%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Noto Sans Mono';
+	src: local('Noto Sans Mono'), local('NotoSansMono-Regular');
+	ascent-override: 115.8%;
+	descent-override: 25.8%;
+	line-gap-override: 8.4%;
+	size-adjust: 83.3333%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Roboto Mono';
+	src: local('Roboto Mono'), local('RobotoMono-Regular');
+	ascent-override: 115.8188%;
+	descent-override: 25.8042%;
+	line-gap-override: 8.4014%;
+	size-adjust: 83.3198%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Monaco';
+	src: local('Monaco');
+	ascent-override: 115.8188%;
+	descent-override: 25.8042%;
+	line-gap-override: 8.4014%;
+	size-adjust: 83.3198%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Courier New';
+	src: local('Courier New'), local('CourierNewPSMT');
+	ascent-override: 115.8188%;
+	descent-override: 25.8042%;
+	line-gap-override: 8.4014%;
+	size-adjust: 83.3198%;
+}
+
+@font-face {
+	font-family: 'Iosevka Fallback: Ubuntu Mono';
+	src: local('Ubuntu Mono'), local('UbuntuMono-Regular');
+	ascent-override: 96.5%;
+	descent-override: 21.5%;
+	line-gap-override: 7%;
+	size-adjust: 100%;
 }

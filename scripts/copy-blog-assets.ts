@@ -24,7 +24,8 @@ for (const file of files) {
 	const metadata = parseBlogMetadata(content);
 	if (!metadata || metadata.draft !== false) continue;
 
-	for (const link of renderBlogMarkdown(content).referencedLinks) {
+	const rendered = await renderBlogMarkdown(content);
+	for (const link of rendered.referencedLinks) {
 		if (copied.has(link)) continue;
 		copied.add(link);
 

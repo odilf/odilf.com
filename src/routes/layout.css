@@ -7,8 +7,12 @@
 		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 	--font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 	--font-mono:
-		'Iosevka', 'IosevkaTerm Nerd Font Mono', 'IosevkaTerm', 'ZedMono Nerd Font', ui-monospace,
-		SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+		'Iosevka', 'Iosevka Fallback: SF Mono', 'Iosevka Fallback: Menlo', 'Iosevka Fallback: Consolas',
+		'Iosevka Fallback: DejaVu Sans Mono', 'Iosevka Fallback: Liberation Mono',
+		'Iosevka Fallback: Noto Sans Mono', 'Iosevka Fallback: Roboto Mono', 'Iosevka Fallback: Monaco',
+		'Iosevka Fallback: Courier New', 'Iosevka Fallback: Ubuntu Mono', 'IosevkaTerm Nerd Font Mono',
+		'IosevkaTerm', 'ZedMono Nerd Font', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		'Liberation Mono', 'Courier New', monospace;
 }
 
 :root {
@@ -49,7 +53,6 @@ body {
 }
 
 @layer components {
-
 	h1,
 	h2,
 	h3,
@@ -113,19 +116,19 @@ body {
 			margin-bottom: calc(var(--spacing) * 4);
 		}
 
-		ul>li {
+		ul > li {
 			list-style: disc;
 			margin-left: 2ch;
 			margin-bottom: calc(var(--spacing) * 1);
 		}
 
-		ol>li {
+		ol > li {
 			list-style: decimal-leading-zero;
 			margin-left: 4ch;
 			margin-bottom: calc(var(--spacing) * 1);
 		}
 
-		li>p {
+		li > p {
 			margin-bottom: 0px;
 		}
 
