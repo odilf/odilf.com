@@ -1,4 +1,7 @@
 <script lang="ts">
+	// KaTeX markup in `html` renders unstyled without its stylesheet.
+	import 'katex/dist/katex.min.css';
+
 	let { html }: { html: string } = $props();
 </script>
 

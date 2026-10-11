@@ -9,16 +9,6 @@
 	let { data }: PageProps = $props();
 </script>
 
-<!-- TODO: Is there a better way to bundle just the necessary katex or something like that? or prerender it, essentially. -->
-<svelte:head>
-	<link
-		rel="stylesheet"
-		href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
-		integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib"
-		crossorigin="anonymous"
-	/>
-</svelte:head>
-
 <Back />
 
 <h1>{data.entry.metadata.title}</h1>
