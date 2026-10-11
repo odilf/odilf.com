@@ -16,7 +16,7 @@
 	Feel free to check out my
 	<a href="https://github.com/odilf" target="_blank" rel="noopener noreferrer">GitHub</a>
 	and my
-	<a href="https://git.odilf.com" target="_blank" rel="noopener noreferrer">personal git forge </a>
+	<a href="https://git-archive.odilf.com" target="_blank" rel="noopener noreferrer">personal git </a>
 	for a more comprehensive list.
 </p>
 

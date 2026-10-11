@@ -24,10 +24,6 @@
 			(entry) => (type === 'all' || entry.type === type) && entry.rating >= minRating,
 		),
 	);
-
-	function toggleRating(value: number) {
-		minRating = minRating === value ? 0 : value;
-	}
 </script>
 
 <Back />
@@ -54,7 +50,7 @@
 			class="star-btn bg-neutral px-0 text-2xl text-primary transition hover:text-secondary"
 			class:text-primary-intense={star <= minRating}
 			aria-label="{star} star{star === 1 ? '' : 's'} and up"
-			onclick={() => toggleRating(star)}
+			onclick={() => (minRating = minRating === star ? 0 : star)}
 		>
 			★
 		</button>

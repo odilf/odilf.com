@@ -2,8 +2,6 @@ import { error } from '@sveltejs/kit';
 import { loadMediaLogEntries } from '#lib/server/media-log.js';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
-export const csr = false;
-
 export const entries: EntryGenerator = async () => {
 	const logs = await loadMediaLogEntries();
 	return logs.map((log) => ({ slug: log.slug }));

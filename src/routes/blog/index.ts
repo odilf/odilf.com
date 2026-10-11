@@ -10,9 +10,8 @@ export const BlogMetadata = z
 		title: z.string(),
 		date: Ymd,
 		draft: z
-			.boolean()
-			.nullish()
-			.transform((value) => value ?? null),
+			.unknown()
+			.transform(x => x === false ? false : true),
 		topics: z.array(z.coerce.string()).default([]),
 		lang: z
 			.string()
