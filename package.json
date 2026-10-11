@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm subset:fonts && vite dev",
+		"dev": "pnpm subset:fonts && pnpm copy:blog --include-drafts && vite dev",
 		"build": "pnpm subset:fonts && pnpm copy:blog && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",

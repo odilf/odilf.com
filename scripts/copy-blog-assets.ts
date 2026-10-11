@@ -1,7 +1,7 @@
-import { copyFile, mkdir, readdir, readFile } from 'node:fs/promises';
+import { copyFile, mkdir, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { loadEnvFile } from 'node:process';
-import { parseBlogMetadata, renderBlogMarkdown } from '../src/lib/markdown/index.js';
+import { loadBlogSource } from '../src/lib/blog-source.js';
 
 try {
 	loadEnvFile('.env');
@@ -12,26 +12,23 @@ try {
 const blogPath = process.env.ODILF_BLOG_PATH;
 if (!blogPath) throw new Error('ODILF_BLOG_PATH is not set');
 
+const includeDrafts = process.argv.includes('--include-drafts');
 const outputDir = join(process.cwd(), 'static/blog');
 
-const files = await readdir(blogPath, { withFileTypes: true });
+await rm(outputDir, { recursive: true, force: true });
+
+const { referencedLinks } = await loadBlogSource(blogPath, { hideDrafts: !includeDrafts });
+
 const copied = new Set<string>();
 
-for (const file of files) {
-	if (!file.isFile() || !file.name.endsWith('.md')) continue;
+for (const link of referencedLinks) {
+	if (copied.has(link)) continue;
+	// Absolute paths and URLs are served elsewhere; only blog-relative assets are copied.
+	if (link.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(link)) continue;
+	copied.add(link);
 
-	const content = await readFile(join(blogPath, file.name), 'utf8');
-	const metadata = parseBlogMetadata(content);
-	if (!metadata || metadata.draft !== false) continue;
-
-	const rendered = await renderBlogMarkdown(content);
-	for (const link of rendered.referencedLinks) {
-		if (copied.has(link)) continue;
-		copied.add(link);
-
-		await mkdir(dirname(join(outputDir, link)), { recursive: true });
-		await copyFile(join(blogPath, link), join(outputDir, link));
-	}
+	await mkdir(dirname(join(outputDir, link)), { recursive: true });
+	await copyFile(join(blogPath, link), join(outputDir, link));
 }
 
 console.log(`Copied ${copied.size} blog assets to ${outputDir}`);
