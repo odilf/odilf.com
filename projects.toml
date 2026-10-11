@@ -109,14 +109,6 @@ last_update = "2025-01-17T12:24:13Z"
 language = "Rust"
 topics = []
 
-[projects.incipit]
-description = "Manager for running services on a home server"
-source_code_url = "https://github.com/odilf/incipit"
-creation_date = "2024-08-23T08:54:51Z"
-last_update = "2025-01-06T16:33:51Z"
-language = "Rust"
-topics = []
-
 [projects.elvish]
 description = "Overengineered Advent of Code framework - not quite Santa's elves"
 source_code_url = "https://github.com/odilf/elvish"

@@ -5,10 +5,6 @@
 	import type { Project } from '#lib/schemas/projects.js';
 
 	let { name, project }: { name: string; project: Project } = $props();
-
-	let background = $derived(
-		`background-image: linear-gradient(to right, rgba(0,0,0, 0.2) 0 100%), url(${project.imageUrl ?? ''}); background-position: 50% 40%; background-size: cover; background-repeat: no-repeat;`,
-	);
 </script>
 
 {#snippet link(url: string, arrow: string, label: string)}
@@ -25,8 +21,9 @@
 {/snippet}
 
 <li
-	class="flex justify-between gap-2 rounded-sm px-2 py-6 text-primary-soft opacity-90 transition hover:opacity-100"
-	style={background}
+	class="flex justify-between gap-2 rounded-sm px-2 py-6 text-primary-soft opacity-80 transition hover:opacity-100 dark:opacity-90"
+	style:--image-url="url({project.imageUrl ?? ''})"
+	class:image={project.imageUrl}
 >
 	<div class="flex-1">
 		<h2 class="w-full pt-0 text-xl font-bold text-balance text-secondary">
@@ -61,3 +58,22 @@
 		</ul>
 	</div>
 </li>
+
+<style>
+	li.image {
+		--mix-level: 30%;
+		background-image:
+			linear-gradient(
+				to right,
+				color-mix(in oklch, var(--theme-color-neutral) var(--mix-level), transparent) 0 100%
+			),
+			var(--image-url);
+		background-position: 50% 40%;
+		background-size: cover;
+		background-repeat: no-repeat;
+
+		@media (prefers-color-scheme: light) {
+			--mix-level: 80%;
+		}
+	}
+</style>
