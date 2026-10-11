@@ -2,7 +2,6 @@
 	import { on } from 'svelte/events';
 	import { theme, type Theme } from '#lib/theme.svelte.js';
 
-	/** Glyphs must exist in Iosevka; `pnpm subset:fonts` only keeps codepoints found in source. */
 	const options: { value: Theme; label: string; glyph: string }[] = [
 		{ value: 'dark', label: 'Dark', glyph: '●' },
 		{ value: 'system', label: 'System', glyph: '◐' },
@@ -10,11 +9,17 @@
 	];
 
 	let open = $state(false);
-
 	const current = $derived(options.find((option) => option.value === theme.current) ?? options[0]);
 
-	/** @type {import('svelte/attachments').Attachment} */
-	function dismissWhileOpen(element: Element) {
+	function select(value: Theme) {
+		theme.select(value);
+		open = false;
+	}
+</script>
+
+<div
+	class="relative w-fit"
+	{@attach (element: Element) => {
 		if (!open) return;
 
 		const focusTrigger = () => element.querySelector('button')?.focus();
@@ -32,18 +37,11 @@
 			removePointerListener();
 			removeKeyListener();
 		};
-	}
-
-	function select(value: Theme) {
-		theme.select(value);
-		open = false;
-	}
-</script>
-
-<div class="relative w-fit" {@attach dismissWhileOpen}>
+	}}
+>
 	<button
 		type="button"
-		class="flex items-center gap-2 rounded-xs px-2 py-[1px] text-xs leading-none opacity-80 outline-1 outline-primary/50 hover:opacity-100"
+		class=""
 		aria-expanded={open}
 		aria-controls="theme-options"
 		onclick={() => (open = !open)}
@@ -53,15 +51,12 @@
 	</button>
 
 	{#if open}
-		<ul
-			id="theme-options"
-			class="absolute right-0 z-10 mt-1 flex w-max flex-col gap-1 rounded-xs bg-neutral p-1 outline-1 outline-primary/50"
-		>
+		<ul id="theme-options" class="absolute right-0 z-10">
 			{#each options as option (option.value)}
 				<li>
 					<button
 						type="button"
-						class="flex w-full items-center gap-2 rounded-xs px-2 py-[1px] text-left text-xs leading-none whitespace-nowrap opacity-80 outline-1 outline-primary/50 hover:opacity-100"
+						class="flex w-full items-center py-1 text-center text-xs leading-none"
 						disabled={option.value === theme.current}
 						onclick={() => select(option.value)}
 					>
