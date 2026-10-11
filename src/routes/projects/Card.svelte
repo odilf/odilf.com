@@ -13,12 +13,14 @@
 
 {#snippet link(url: string, arrow: string, label: string)}
 	<a
-		class="group/link inline-block w-full -translate-x-[1.5ch] text-inherit transition-[translate] hover:-translate-x-[1ch]"
+		class="group/link inline-block w-full translate-x-[-1.5ch] text-inherit transition-[translate] hover:translate-x-[-1ch]"
 		href={url}
 		target="_blank"
 		rel="noopener noreferrer"
 	>
-		<span class="opacity-80 transition-opacity group-hover/link:opacity-100">{arrow} </span>{label}
+		<span class="mr-[1ch] opacity-80 transition-opacity group-hover/link:opacity-100"
+			>{arrow}
+		</span>{label}
 	</a>
 {/snippet}
 
@@ -29,8 +31,7 @@
 	<div class="flex-1">
 		<h2 class="w-full pt-0 text-xl font-bold text-balance text-secondary">
 			<a href={projectMainLink(project)} target="_blank" rel="noopener noreferrer">
-				<!-- TODO: There is no space between this and `name` -->
-				<span class="opacity-50">> </span>{name}
+				<span class="mr-[1ch] opacity-50">> </span>{name}
 			</a>
 		</h2>
 
