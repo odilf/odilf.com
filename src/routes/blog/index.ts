@@ -23,14 +23,14 @@ export const BlogMetadata = z
 
 export type BlogMetadata = z.infer<typeof BlogMetadata>;
 
-export class BlogEntry extends Data<{
+export interface BlogEntry {
 	slug: string;
 	html: string;
 	summary: string;
 	wordCount: number;
 	metadata: BlogMetadata;
-}>() {
-	tags(): string[] {
-		return [...this.metadata.topics, `${(this.wordCount / 1000).toFixed(1)}k words`]
-	}
+}
+
+export function blogTags({ metadata: { topics }, wordCount }: BlogEntry): string[] {
+	return [...topics, `${(wordCount / 1000).toFixed(1)}k words`]
 }

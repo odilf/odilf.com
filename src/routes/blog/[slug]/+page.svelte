@@ -3,14 +3,13 @@
 	import Markdown from '#lib/components/Markdown.svelte';
 	import Tag from '#lib/components/Tag.svelte';
 	import { formatHumanAbsoluteDate } from '#lib/date.js';
+	import { blogTags } from '..';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-
-	let tags = $derived(data.entry.tags());
 </script>
 
-<!-- TODO: Is there a better way to bundle just the necessary katex or something like that? -->
+<!-- TODO: Is there a better way to bundle just the necessary katex or something like that? or prerender it, essentially. -->
 <svelte:head>
 	<link
 		rel="stylesheet"
@@ -29,7 +28,7 @@
 		<div class="font-light text-primary">{formatHumanAbsoluteDate(data.entry.metadata.date)}</div>
 	{/if}
 	<div class="flex-1"></div>
-	{#each tags as tag (tag)}
+	{#each blogTags(data.entry) as tag (tag)}
 		<Tag topic={tag} />
 	{/each}
 </div>

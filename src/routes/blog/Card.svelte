@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Tag from '#lib/components/Tag.svelte';
 	import { formatHumanAbsoluteDate } from '#lib/date.js';
-	import type { BlogEntry } from './index.js';
+	import { type BlogEntry, blogTags } from './index.js';
 
 	let { entry }: { entry: BlogEntry } = $props();
 
-	let tags = $derived(entry.tags());
+	let tags = $derived(blogTags(entry));
 	let half = $derived(Math.ceil(tags.length / 2));
 </script>
 

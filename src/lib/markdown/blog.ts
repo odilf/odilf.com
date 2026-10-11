@@ -1,4 +1,3 @@
-import matter from 'gray-matter';
 import type { Root } from 'mdast';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
@@ -10,7 +9,7 @@ import remarkRehype from 'remark-rehype';
 import { unified, type Transformer } from 'unified';
 import { visit } from 'unist-util-visit';
 import { BlogMetadata } from '#routes/blog/index.js';
-import { rehypeFigure } from './shared.js';
+import { frontmatter, rehypeFigure } from './index.js';
 
 const SUMMARY_LENGTH = 250;
 
@@ -22,15 +21,15 @@ export interface RenderedMarkdown {
 }
 
 export function parseBlogMetadata(content: string): BlogMetadata | null {
-	const result = BlogMetadata.safeParse(matter(content).data);
+	const result = BlogMetadata.safeParse(frontmatter(content).data);
 	return result.success ? result.data : null;
 }
 
-export function renderBlogMarkdown(content: string): RenderedMarkdown {
-	const { content: body } = matter(content);
+export async function renderBlogMarkdown(content: string): Promise<RenderedMarkdown> {
+	const { content: body } = frontmatter(content);
 	const referencedLinks: string[] = [];
 
-	const file = unified()
+	const file = await unified()
 		.use(remarkParse)
 		.use(remarkGfm)
 		.use(remarkMath)
@@ -40,7 +39,7 @@ export function renderBlogMarkdown(content: string): RenderedMarkdown {
 		.use(rehypeKatex)
 		.use(rehypeFigure)
 		.use(rehypeStringify, { allowDangerousHtml: true })
-		.processSync(body);
+		.process(body);
 
 	return {
 		html: String(file),
