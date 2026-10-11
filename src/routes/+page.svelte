@@ -21,7 +21,7 @@
 	{#each Object.entries(pages) as [label, desc] (label)}
 		<li class="text-2xl text-secondary hover:underline">
 			<a href="/{label.split(' ').join('-')}">
-				<p>> {label}</p>
+				<p class="font-semibold">> {label}</p>
 				<p class="text-lg text-primary-soft">{desc}</p>
 			</a>
 		</li>

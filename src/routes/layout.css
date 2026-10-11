@@ -14,11 +14,11 @@
 :root {
 	color-scheme: dark;
 
-	--theme-color-neutral: light-dark(oklch(0.99 0.005 236), oklch(3.97% 0.0074 99));
+	--theme-color-neutral: light-dark(oklch(0.9965 0.00147 79.41), oklch(3.97% 0.0074 99));
 	--theme-color-primary: light-dark(oklch(0.0559 0.0937 57.18), oklch(99% 0.000345 99));
-	--theme-color-primary-intense: light-dark(oklch(0.6 0.301 90), oklch(0.94 0.1011 96));
+	--theme-color-primary-intense: light-dark(oklch(0.6 0.301 90), oklch(0.94 0.1211 96));
 	--theme-color-primary-soft: light-dark(oklch(0.31 0.0011 96), oklch(0.84 0.0111 96));
-	--theme-color-secondary: light-dark(oklch(0.5382 0.1283 322.41), oklch(92.5% 0.0937 322.41));
+	--theme-color-secondary: light-dark(oklch(0.4382 0.1283 322.41), oklch(92.5% 0.1937 322.41));
 	--theme-color-tertiary: light-dark(oklch(0.9 0.905 236), oklch(88.38% 0.0493 250.94));
 }
 
@@ -49,6 +49,7 @@ body {
 }
 
 @layer components {
+
 	h1,
 	h2,
 	h3,
@@ -112,19 +113,19 @@ body {
 			margin-bottom: calc(var(--spacing) * 4);
 		}
 
-		ul > li {
+		ul>li {
 			list-style: disc;
 			margin-left: 2ch;
 			margin-bottom: calc(var(--spacing) * 1);
 		}
 
-		ol > li {
+		ol>li {
 			list-style: decimal-leading-zero;
 			margin-left: 4ch;
 			margin-bottom: calc(var(--spacing) * 1);
 		}
 
-		li > p {
+		li>p {
 			margin-bottom: 0px;
 		}
 
@@ -185,16 +186,30 @@ body {
 	}
 
 	button:hover {
-		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 25%);
+		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 15%);
 	}
 
 	button:active {
-		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 45%);
+		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 25%);
 	}
 
 	button:disabled {
-		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 80%);
 		color: var(--color-primary);
+		background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 80%);
+	}
+
+	@media (prefers-color-scheme: light) {
+		button:hover {
+			background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 45%);
+		}
+
+		button:active {
+			background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 65%);
+		}
+
+		button:disabled {
+			background-color: color-mix(in oklch, var(--color-primary), var(--color-neutral) 95%);
+		}
 	}
 
 	.glow {
