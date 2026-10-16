@@ -28,15 +28,23 @@
 			</li>
 		</ul>
 
-		<object
-			class="pt-8"
-			data="https://github.com/odilf/cv/releases/latest/download/cv-english.pdf"
-			type="application/pdf"
-			title="CV (English)"
-			width="100%"
-			style="aspect-ratio: 0.67;"
-		>
-			Your browser can't render this PDF, please use the links above.
-		</object>
+		<img
+			alt="cv render"
+			class="invert-on-dark"
+			src="https://github.com/odilf/cv/releases/latest/download/cv-english.png"
+		/>
 	</div>
 </div>
+
+<style>
+	img {
+		--width: min(139%, calc(100vw - 2rem));
+		width: var(--width);
+		max-width: none;
+		margin-inline: calc((100% - var(--width)) / 2);
+	}
+
+	:global(html[data-theme='dark']) .invert-on-dark {
+		filter: invert(1) hue-rotate(180deg);
+	}
+</style>

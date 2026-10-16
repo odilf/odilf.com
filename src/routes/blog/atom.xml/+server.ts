@@ -4,7 +4,7 @@ import type { BlogEntry } from '#routes/blog/index.js';
 const SITE = 'https://odilf.com';
 const FEED_TITLE = "Odilf's blog";
 const FEED_DESCRIPTION = "Odilf's personal blog.";
-const AUTHOR_EMAIL = 'odysseas.maheras@gmail.com';
+const AUTHOR_EMAIL = 'contact@odilf.com';
 /** Date-only blog entries are published at 10:00 UTC+2. */
 const PUBLISH_TIME = '10:00:00+02:00';
 
